@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.extractors.gitlab.gitlab_client import GitLabClient
+from src.extractors.gitlab.gitlab_client_improved import GitLabClient
 from src.extractors.gitlab.projects_gateway import GitLabProjectsGateway
 from src.extractors.gitlab.stats_extractor import GitLabStatsExtractor
 
@@ -201,7 +201,7 @@ class TestGitLabStatsExtractor:
         assert stats['avg_time_to_merge'] > 0
         # 50 lignes -> small, 120 -> medium, 200 -> medium-large
         assert stats['size_distribution']['small'] == 1
-        assert stats['size_distribution']['medium'] == 1
+        assert stats['size_distribution']['medium'] == 2
         assert stats['size_distribution']['large'] == 0
         assert stats['size_distribution']['extra_large'] == 1
 

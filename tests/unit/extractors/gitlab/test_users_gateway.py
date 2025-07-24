@@ -9,7 +9,7 @@ import json
 import pytest
 from unittest.mock import MagicMock, patch, call
 
-from src.extractors.gitlab.gitlab_client import GitLabClient
+from src.extractors.gitlab.gitlab_client_improved import GitLabClient
 from src.extractors.gitlab.users_gateway import GitLabUsersGateway
 
 
