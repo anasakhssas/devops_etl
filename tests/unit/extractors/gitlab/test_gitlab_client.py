@@ -155,12 +155,29 @@ def test_real_connection(gitlab_config):
     """Test d'intégration avec un vrai serveur GitLab."""
     client = GitLabClient(gitlab_config)
     result = client.validate_connection()
-    
+    print("validate_connection result:", result)
+
     assert isinstance(result, dict)
     assert "api_endpoint" in result
     assert "connection_successful" in result
-    
+
     if result["connection_successful"]:
         assert "user_information" in result
         # Version devient optionnelle pour plus de robustesse
         assert "gitlab_version" in result or True
+
+        # Tester extraction des utilisateurs réels
+        users = client.extract_gitlab_users()
+        print("extract_gitlab_users result:", users[:2])  # Affiche les 2 premiers utilisateurs
+
+        # Tester extraction des projets réels
+        projects = client.extract_gitlab_projects()
+        print("extract_gitlab_projects result:", projects[:2])  # Affiche les 2 premiers projets
+
+        # Test extraction d'une ressource générique (ex: users)
+        generic_users = client.extract_gitlab_resource("users")
+        print("extract_gitlab_resource('users') result:", generic_users[:2])
+
+        # Test extraction d'une ressource générique (ex: projects)
+        generic_projects = client.extract_gitlab_resource("projects")
+        print("extract_gitlab_resource('projects') result:", generic_projects[:2])

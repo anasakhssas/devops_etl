@@ -4,14 +4,13 @@ Client GitLab optimisé avec conventions de nomenclature améliorées.
 Ce module fournit un client GitLab suivant les meilleures pratiques
 de nomenclature et de structuration du code Python.
 """
+import gitlab
 import logging
 import ssl
 import time
 from typing import Any, Dict, List, Optional, Union
 
-import gitlab
 import urllib3
-from gitlab.v4.objects import Project, Group, User
 from urllib3.exceptions import InsecureRequestWarning
 
 from src.core.constants import (
@@ -179,26 +178,22 @@ class GitLabClient:
             raise APIConnectionError(error_message)
     
     def _create_gitlab_client(self) -> gitlab.Gitlab:
-        """
-        Crée et configure le client GitLab.
-        
-        Returns:
-            Client GitLab configuré
-        """
+        """Crée et configure le client GitLab."""
+        import re
+        base_url = self._api_url.rstrip('/')
+        # Supprime tous les '/api/v4' finaux pour donner l'URL racine à python-gitlab
+        base_url = re.sub(r'(/api/v4)+$', '', base_url)
+        base_url = base_url.rstrip('/')
+        print(f"[DEBUG] GitLab base_url utilisé: {base_url}")  # Debug temporaire
+
         gitlab_client = gitlab.Gitlab(
-            url=self._api_url,
+            url=base_url,
             private_token=self._private_token,
             ssl_verify=self._ssl_verification_enabled,
-            timeout=self._request_timeout,
-            retry_transient_errors=True,
-            per_page=self._items_per_page
+            timeout=self._request_timeout
         )
-        
-        # Configuration proxy si définie
         if self._proxy_settings:
             gitlab_client.session.proxies.update(self._proxy_settings)
-            self._logger.info(f"Proxy configuré: {list(self._proxy_settings.keys())}")
-        
         return gitlab_client
     
     def _authenticate_user(self) -> None:
@@ -317,7 +312,7 @@ class GitLabClient:
         
         try:
             # Récupération des utilisateurs
-            gitlab_users = self._gitlab_client.users.list(all=True, **request_parameters)
+            gitlab_users = self._gitlab_client.users.list(get_all=True, **request_parameters)
             
             # Conversion et filtrage
             processed_users = []
@@ -373,7 +368,7 @@ class GitLabClient:
             request_parameters["per_page"] = self._items_per_page
         
         try:
-            gitlab_projects = self._gitlab_client.projects.list(all=True, **request_parameters)
+            gitlab_projects = self._gitlab_client.projects.list(get_all=True, **request_parameters)
             processed_projects = [
                 self._convert_gitlab_object_to_dict(project) 
                 for project in gitlab_projects
@@ -485,7 +480,7 @@ class GitLabClient:
             Liste des ressources extraites
         """
         try:
-            resource_items = resource_manager.list(**(parameters or {}))
+            resource_items = resource_manager.list(get_all=True, **(parameters or {}))
             return [self._convert_gitlab_object_to_dict(item) for item in resource_items]
         except gitlab.exceptions.GitlabListError as list_error:
             self._logger.error(f"Erreur lors de la récupération de la liste {resource_type}: {list_error}")
@@ -519,7 +514,6 @@ class GitLabClient:
         self._connection_status = False
         self._gitlab_client = None
         self._current_user_info = None
-        super().close()
     
     @property
     def is_connected(self) -> bool:
@@ -549,7 +543,7 @@ class GitLabClient:
 
     def test_connection(self) -> Dict[str, Any]:
         try:
-            user = self.gl.user
+            user = self._gitlab_client.user
             gitlab_version = self._get_gitlab_version()
             return {
                 "connection_successful": True,
@@ -566,16 +560,10 @@ class GitLabClient:
 
     def _get_gitlab_version(self) -> Optional[str]:
         try:
-            version_info = self.gl.version()
+            version_info = self._gitlab_client.version()
             return version_info.get("version", "unknown") if isinstance(version_info, dict) else "unknown"
         except Exception as e:
             print(f"Impossible de récupérer la version GitLab: {e}")
             return "unknown"
 
-    
-    @is_connected.setter
-    def is_connected(self, value: bool) -> None:
-        """Setter pour la propriété is_connected (utile pour les tests)."""
-        self._connection_status = value
-    
 
