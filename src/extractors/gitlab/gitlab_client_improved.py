@@ -566,4 +566,23 @@ class GitLabClient:
             print(f"Impossible de récupérer la version GitLab: {e}")
             return "unknown"
 
+    def get_project_commits(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les commits d'un projet GitLab.
+        Args:
+            project_id: ID du projet
+            params: paramètres optionnels pour filtrer les commits
+        Returns:
+            Liste de commits (dictionnaires)
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            commits = project.commits.list(get_all=True, **(params or {}))
+            return [self._convert_gitlab_object_to_dict(commit) for commit in commits]
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des commits du projet {project_id}: {e}")
+            return []
+
 

@@ -49,10 +49,7 @@ class GitLabProjectsGateway:
         parameters = params.copy() if params else {}
         if since:
             parameters["since"] = since
-        return self.client.extract_gitlab_resource(
-            resource_type=f"projects/{project_id}/repository/commits",
-            additional_parameters=parameters
-        )
+        return self.client.get_project_commits(project_id, parameters)
 
     def get_project_merge_requests(self, project_id: int, params: Optional[Dict[str, Any]] = None, updated_after: Optional[str] = None) -> List[Dict[str, Any]]:
         """
