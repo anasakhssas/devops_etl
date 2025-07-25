@@ -43,13 +43,10 @@ class GitLabUsersGateway:
             # S'assurer que le client est connecté
             if not self.client.is_connected:
                 self.client.connect()
-            # Utiliser l'API users de python-gitlab 6.1.0
-            # https://python-gitlab.readthedocs.io/en/stable/gl_objects/users.html
-            users_list = self.client.gl.users.list(**params)
-            # Convertir les objets utilisateur en dictionnaires
-            return [user.asdict() for user in users_list]
+            users_list = self.client._gitlab_client.users.list(**params)
+            return [user.attributes for user in users_list]
         except Exception as e:
-            self.client.logger.error(f"Erreur lors de la récupération des utilisateurs: {e}")
+            self.client._logger.error(f"Erreur lors de la récupération des utilisateurs: {e}")
             return []
 
     def get_user(self, user_id: int) -> Dict[str, Any]:
@@ -65,12 +62,10 @@ class GitLabUsersGateway:
         try:
             if not self.client.is_connected:
                 self.client.connect()
-                
-            # Utiliser la méthode _make_request pour obtenir les détails d'un utilisateur
             endpoint = f"/users/{user_id}"
             return self.client._make_request("GET", endpoint)
         except Exception as e:
-            self.client.logger.error(f"Erreur lors de la récupération de l'utilisateur {user_id}: {e}")
+            self.client._logger.error(f"Erreur lors de la récupération de l'utilisateur {user_id}: {e}")
             return {}
 
     def get_current_user(self) -> Dict[str, Any]:
@@ -83,10 +78,8 @@ class GitLabUsersGateway:
         try:
             if not self.client.is_connected:
                 self.client.connect()
-            
-            # Avec python-gitlab, nous pouvons directement accéder à l'utilisateur courant
-            if hasattr(self.client.gl, 'user') and self.client.gl.user:
-                user = self.client.gl.user
+            if hasattr(self.client._gitlab_client, 'user') and self.client._gitlab_client.user:
+                user = self.client._gitlab_client.user
                 return {
                     'id': user.id,
                     'username': user.username,
@@ -99,10 +92,9 @@ class GitLabUsersGateway:
                     'last_activity_on': user.last_activity_on
                 }
             else:
-                # Fallback à la méthode classique si user n'est pas disponible
                 return self.client._make_request("GET", "/user")
         except Exception as e:
-            self.client.logger.error(f"Erreur lors de la récupération de l'utilisateur courant: {e}")
+            self.client._logger.error(f"Erreur lors de la récupération de l'utilisateur courant: {e}")
             return {}
 
     def get_user_projects(self, user_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
@@ -122,11 +114,10 @@ class GitLabUsersGateway:
         try:
             if not self.client.is_connected:
                 self.client.connect()
-            
             endpoint = f"/users/{user_id}/projects"
             return self.client._get_paginated_results(endpoint, params=params or {})
         except Exception as e:
-            self.client.logger.error(f"Erreur lors de la récupération des projets de l'utilisateur {user_id}: {e}")
+            self.client._logger.error(f"Erreur lors de la récupération des projets de l'utilisateur {user_id}: {e}")
             return []
 
     def get_user_groups(self, user_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
@@ -143,11 +134,10 @@ class GitLabUsersGateway:
         try:
             if not self.client.is_connected:
                 self.client.connect()
-                
             endpoint = f"/users/{user_id}/groups"
             return self.client._get_paginated_results(endpoint, params=params or {})
         except Exception as e:
-            self.client.logger.error(f"Erreur lors de la récupération des groupes de l'utilisateur {user_id}: {e}")
+            self.client._logger.error(f"Erreur lors de la récupération des groupes de l'utilisateur {user_id}: {e}")
             return []
     
     def get_user_events(self, user_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
@@ -167,9 +157,9 @@ class GitLabUsersGateway:
         try:
             if not self.client.is_connected:
                 self.client.connect()
-                
             endpoint = f"/users/{user_id}/events"
             return self.client._get_paginated_results(endpoint, params=params or {})
         except Exception as e:
-            self.client.logger.error(f"Erreur lors de la récupération des événements de l'utilisateur {user_id}: {e}")
+            self.client._logger.error(f"Erreur lors de la récupération des événements de l'utilisateur {user_id}: {e}")
             return []
+        
