@@ -287,6 +287,56 @@ def fetch_all_projects_resource_incremental(projects_gateway, resource, params=N
         print(f"[INFO] Aucune nouvelle date à enregistrer pour {resource}.")
     return all_items
 
+def fetch_all_projects_events(projects_gateway, params=None):
+    """
+    Récupère tous les events pour chaque projet.
+    :return: dict {project_id: [events]}
+    """
+    projects = projects_gateway.get_projects(params={"membership": True})
+    print(f"[DEBUG] Nombre de projets extraits : {len(projects)}")
+    all_events = {}
+    for p in projects:
+        project_id = p.get("id")
+        project_name = p.get("name")
+        events = projects_gateway.get_project_events(project_id, params=params)
+        # Conversion en dict si besoin
+        events_dicts = [e.attributes if hasattr(e, "attributes") else e for e in events]
+        all_events[project_id] = events_dicts
+        print(f"[DEBUG] {project_name} ({project_id}): {len(events_dicts)} events")
+    return all_events
+
+def fetch_all_projects_events_incremental(projects_gateway, params=None, date_field="created_at", api_param="after"):
+    """
+    Extraction incrémentielle des events pour chaque projet.
+    """
+    last_date = get_last_extraction_date("events")
+    if last_date:
+        if params is None:
+            params = {}
+        params = params.copy()
+        params[api_param] = last_date
+    projects = projects_gateway.get_projects(params={"membership": True})
+    all_events = {}
+    max_date = last_date
+    for p in projects:
+        project_id = p.get("id")
+        project_name = p.get("name")
+        events = projects_gateway.get_project_events(project_id, params=params)
+        # Conversion en dict pour chaque event
+        events_dicts = [e.attributes if hasattr(e, "attributes") else e for e in events]
+        all_events[project_id] = events_dicts
+        for event in events_dicts:
+            event_date = event.get(date_field)
+            if event_date and (not max_date or event_date > max_date):
+                max_date = event_date
+    print(f"[DEBUG] events last_date: {last_date}, max_date: {max_date}")
+    if max_date and max_date != last_date:
+        set_last_extraction_date("events", max_date)
+        print(f"[INFO] Date de dernière extraction events mise à jour: {max_date}")
+    else:
+        print(f"[INFO] Aucune nouvelle date à enregistrer pour events.")
+    return all_events
+
 def main():
     load_dotenv()
 
@@ -355,6 +405,11 @@ def main():
     all_members = fetch_all_projects_members(projects_gateway, params={"membership": True})
     save_json(all_members, "projects_members_full.json")
 
+    # Extraction complète des events (full)
+    print("\n🗃️ Extraction des events par projet...")
+    all_events = fetch_all_projects_events(projects_gateway, params={"membership": True})
+    save_json(all_events, "projects_events_full.json")
+
     # Extraction incrémentielle des commits
     print("\n📄 Extraction incrémentielle des commits...")
     all_commits_incremental = fetch_all_projects_commits_incremental(projects_gateway)
@@ -388,6 +443,11 @@ def main():
     )
     save_json(all_branches_incremental, "projects_branches_incremental.json")
 
+    # Extraction incrémentielle des events
+    print("\n📄 Extraction incrémentielle des events...")
+    all_events_incremental = fetch_all_projects_events_incremental(projects_gateway)
+    save_json(all_events_incremental, "projects_events_incremental.json")
+
     print("\n✅ Extraction terminée.")
 
 # Explication :
@@ -397,6 +457,7 @@ def main():
 # - projects_merge_requests_full.json / projects_merge_requests_incremental.json : même logique pour les merge requests
 # - projects_pipelines_full.json / projects_pipelines_incremental.json : même logique pour les pipelines
 # - projects_branches_full.json / projects_branches_incremental.json : même logique pour les branches
+# - projects_events_full.json / projects_events_incremental.json : même logique pour les events
 #
 # Pour chaque ressource, *_full.json contient tout l'historique, *_incremental.json contient uniquement les nouveautés depuis la dernière extraction.
 if __name__ == "__main__":

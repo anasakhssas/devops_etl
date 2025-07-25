@@ -656,4 +656,17 @@ class GitLabClient:
             self._logger.error(f"Erreur lors de la récupération des membres du projet {project_id}: {e}")
             return []
 
+    def get_project_events(self, project_id: int, params: dict = None) -> list:
+        """
+        Récupère les événements d'un projet GitLab.
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            return project.events.list(get_all=True, **(params or {}))
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des events du projet {project_id}: {e}")
+            return []
+
 

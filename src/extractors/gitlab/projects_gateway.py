@@ -81,3 +81,9 @@ class GitLabProjectsGateway:
         Récupère la liste des branches d'un projet.
         """
         return self.client.get_project_branches(project_id, params)
+
+    def get_project_events(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les événements d'un projet.
+        """
+        return self.client.get_project_events(project_id, params or {})
