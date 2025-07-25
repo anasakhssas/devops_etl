@@ -38,9 +38,7 @@ class GitLabProjectsGateway:
         """
         Récupère la liste des membres d'un projet.
         """
-        return self.client.extract_gitlab_resource(
-            resource_type=f"projects/{project_id}/members"
-        )
+        return self.client.get_project_members(project_id)
 
     def get_project_commits(self, project_id: int, params: Optional[Dict[str, Any]] = None, since: Optional[str] = None) -> List[Dict[str, Any]]:
         """
@@ -58,10 +56,7 @@ class GitLabProjectsGateway:
         parameters = params.copy() if params else {}
         if updated_after:
             parameters["updated_after"] = updated_after
-        return self.client.extract_gitlab_resource(
-            resource_type=f"projects/{project_id}/merge_requests",
-            additional_parameters=parameters
-        )
+        return self.client.get_project_merge_requests(project_id, parameters)
 
     def get_project_issues(self, project_id: int, params: Optional[Dict[str, Any]] = None, updated_after: Optional[str] = None) -> List[Dict[str, Any]]:
         """
@@ -70,10 +65,7 @@ class GitLabProjectsGateway:
         parameters = params.copy() if params else {}
         if updated_after:
             parameters["updated_after"] = updated_after
-        return self.client.extract_gitlab_resource(
-            resource_type=f"projects/{project_id}/issues",
-            additional_parameters=parameters
-        )
+        return self.client.get_project_issues(project_id, parameters)
 
     def get_project_pipelines(self, project_id: int, params: Optional[Dict[str, Any]] = None, updated_after: Optional[str] = None) -> List[Dict[str, Any]]:
         """
@@ -82,16 +74,10 @@ class GitLabProjectsGateway:
         parameters = params.copy() if params else {}
         if updated_after:
             parameters["updated_after"] = updated_after
-        return self.client.extract_gitlab_resource(
-            resource_type=f"projects/{project_id}/pipelines",
-            additional_parameters=parameters
-        )
+        return self.client.get_project_pipelines(project_id, parameters)
 
     def get_project_branches(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Récupère la liste des branches d'un projet.
         """
-        return self.client.extract_gitlab_resource(
-            resource_type=f"projects/{project_id}/repository/branches",
-            additional_parameters=params
-        )
+        return self.client.get_project_branches(project_id, params)

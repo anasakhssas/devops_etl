@@ -1,0 +1,154 @@
+{
+  "anas": [
+    {
+      "project_id": "71906513",
+      "name": "main",
+      "commit": {
+        "id": "c0bea9bfa83995f89c24517f2c87b120e5adf547",
+        "short_id": "c0bea9bf",
+        "created_at": "2025-07-24T17:41:38.000+00:00",
+        "parent_ids": [],
+        "title": "Initial commit",
+        "message": "Initial commit",
+        "author_name": "Anas Akhssas",
+        "author_email": "anasakhssas1@gmail.com",
+        "authored_date": "2025-07-24T17:41:38.000+00:00",
+        "committer_name": "Anas Akhssas",
+        "committer_email": "anasakhssas1@gmail.com",
+        "committed_date": "2025-07-24T17:41:38.000+00:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/commit/c0bea9bfa83995f89c24517f2c87b120e5adf547"
+      },
+      "merged": false,
+      "protected": true,
+      "developers_can_push": false,
+      "developers_can_merge": false,
+      "can_push": true,
+      "default": true,
+      "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/tree/main"
+    }
+  ],
+  "test4": [
+    {
+      "project_id": "71866675",
+      "name": "main",
+      "commit": {
+        "id": "12510787d3ec34f92ab1837f00dc07ab039b1c56",
+        "short_id": "12510787",
+        "created_at": "2025-07-23T14:26:40.000+00:00",
+        "parent_ids": [],
+        "title": "Initial commit",
+        "message": "Initial commit",
+        "author_name": "Anas Akhssas",
+        "author_email": "anasakhssas1@gmail.com",
+        "authored_date": "2025-07-23T14:26:40.000+00:00",
+        "committer_name": "Anas Akhssas",
+        "committer_email": "anasakhssas1@gmail.com",
+        "committed_date": "2025-07-23T14:26:40.000+00:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/commit/12510787d3ec34f92ab1837f00dc07ab039b1c56"
+      },
+      "merged": false,
+      "protected": true,
+      "developers_can_push": false,
+      "developers_can_merge": false,
+      "can_push": true,
+      "default": true,
+      "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/tree/main"
+    }
+  ],
+  "devops_etl": [
+    {
+      "project_id": "71825485",
+      "name": "main",
+      "commit": {
+        "id": "06023606d26ba362a4e277a69ae50af8fd8f4913",
+        "short_id": "06023606",
+        "created_at": "2025-07-22T11:05:27.000+01:00",
+        "parent_ids": [
+          "b10932e94cadc11e82b6ea976b1de1a6386059a6"
+        ],
+        "title": "requirement.txt",
+        "message": "requirement.txt\n",
+        "author_name": "anasakhssas",
+        "author_email": "anasakhssas357@gmail.com",
+        "authored_date": "2025-07-22T11:05:27.000+01:00",
+        "committer_name": "anasakhssas",
+        "committer_email": "anasakhssas357@gmail.com",
+        "committed_date": "2025-07-22T11:05:27.000+01:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/commit/06023606d26ba362a4e277a69ae50af8fd8f4913"
+      },
+      "merged": false,
+      "protected": true,
+      "developers_can_push": false,
+      "developers_can_merge": false,
+      "can_push": true,
+      "default": true,
+      "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/tree/main"
+    }
+  ],
+  "gitlab1": [
+    {
+      "project_id": "71824847",
+      "name": "main",
+      "commit": {
+        "id": "59366d85370e69235bed7cf64e4d844d334c4c02",
+        "short_id": "59366d85",
+        "created_at": "2025-07-22T08:51:27.000+00:00",
+        "parent_ids": [],
+        "title": "Initial commit",
+        "message": "Initial commit",
+        "author_name": "Anas Akhssas",
+        "author_email": "anasakhssas1@gmail.com",
+        "authored_date": "2025-07-22T08:51:27.000+00:00",
+        "committer_name": "Anas Akhssas",
+        "committer_email": "anasakhssas1@gmail.com",
+        "committed_date": "2025-07-22T08:51:27.000+00:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/anasakhssas1-group/gitlab1/-/commit/59366d85370e69235bed7cf64e4d844d334c4c02"
+      },
+      "merged": false,
+      "protected": true,
+      "developers_can_push": false,
+      "developers_can_merge": false,
+      "can_push": true,
+      "default": true,
+      "web_url": "https://gitlab.com/anasakhssas1-group/gitlab1/-/tree/main"
+    }
+  ],
+  "devops_etl-deleted-71824428": [
+    {
+      "project_id": "71824428",
+      "name": "main",
+      "commit": {
+        "id": "8b75910a570067343b83e0a549ed1fcb6705cb03",
+        "short_id": "8b75910a",
+        "created_at": "2025-07-22T08:38:14.000+00:00",
+        "parent_ids": [],
+        "title": "Initial commit",
+        "message": "Initial commit",
+        "author_name": "Anas Akhssas",
+        "author_email": "anasakhssas1@gmail.com",
+        "authored_date": "2025-07-22T08:38:14.000+00:00",
+        "committer_name": "Anas Akhssas",
+        "committer_email": "anasakhssas1@gmail.com",
+        "committed_date": "2025-07-22T08:38:14.000+00:00",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428/-/commit/8b75910a570067343b83e0a549ed1fcb6705cb03"
+      },
+      "merged": false,
+      "protected": true,
+      "developers_can_push": false,
+      "developers_can_merge": false,
+      "can_push": true,
+      "default": true,
+      "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428/-/tree/main"
+    }
+  ]
+}

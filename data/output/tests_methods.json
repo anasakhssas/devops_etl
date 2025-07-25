@@ -1,27 +1,27 @@
 {
   "project_tested": {
-    "id": 71834446,
-    "name": "salmaeddib-project"
+    "id": 71906513,
+    "name": "anas"
   },
   "get_projects": {
-    "count": 1
+    "count": 5
   },
   "get_project_members": {
-    "error": "Type de ressource 'projects/71834446/members' non supporté. Types supportés: ['users', 'projects', 'groups', 'issues', 'merge_requests', 'commits', 'branches', 'tags']"
+    "count": 0
   },
   "get_project_commits": {
     "count": 1
   },
   "get_project_merge_requests": {
-    "error": "Type de ressource 'projects/71834446/merge_requests' non supporté. Types supportés: ['users', 'projects', 'groups', 'issues', 'merge_requests', 'commits', 'branches', 'tags']"
+    "count": 0
   },
   "get_project_issues": {
-    "error": "Type de ressource 'projects/71834446/issues' non supporté. Types supportés: ['users', 'projects', 'groups', 'issues', 'merge_requests', 'commits', 'branches', 'tags']"
+    "count": 0
   },
   "get_project_pipelines": {
-    "error": "Type de ressource 'projects/71834446/pipelines' non supporté. Types supportés: ['users', 'projects', 'groups', 'issues', 'merge_requests', 'commits', 'branches', 'tags']"
+    "count": 0
   },
   "get_project_branches": {
-    "error": "Type de ressource 'projects/71834446/repository/branches' non supporté. Types supportés: ['users', 'projects', 'groups', 'issues', 'merge_requests', 'commits', 'branches', 'tags']"
+    "count": 1
   }
 }

@@ -566,6 +566,7 @@ class GitLabClient:
             print(f"Impossible de récupérer la version GitLab: {e}")
             return "unknown"
 
+    # Ajoute cette méthode à la classe GitLabClient
     def get_project_commits(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Récupère les commits d'un projet GitLab.
@@ -583,6 +584,76 @@ class GitLabClient:
             return [self._convert_gitlab_object_to_dict(commit) for commit in commits]
         except Exception as e:
             self._logger.error(f"Erreur lors de la récupération des commits du projet {project_id}: {e}")
+            return []
+
+    def get_project_pipelines(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les pipelines d'un projet GitLab.
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            pipelines = project.pipelines.list(get_all=True, **(params or {}))
+            return [self._convert_gitlab_object_to_dict(p) for p in pipelines]
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des pipelines du projet {project_id}: {e}")
+            return []
+
+    def get_project_issues(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les issues d'un projet GitLab.
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            issues = project.issues.list(get_all=True, **(params or {}))
+            return [self._convert_gitlab_object_to_dict(i) for i in issues]
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des issues du projet {project_id}: {e}")
+            return []
+
+    def get_project_branches(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les branches d'un projet GitLab.
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            branches = project.branches.list(get_all=True, **(params or {}))
+            return [self._convert_gitlab_object_to_dict(b) for b in branches]
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des branches du projet {project_id}: {e}")
+            return []
+
+    def get_project_merge_requests(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les merge requests d'un projet GitLab.
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            mrs = project.mergerequests.list(get_all=True, **(params or {}))
+            return [self._convert_gitlab_object_to_dict(mr) for mr in mrs]
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des merge requests du projet {project_id}: {e}")
+            return []
+
+    def get_project_members(self, project_id: int, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère les membres d'un projet GitLab.
+        """
+        if self._gitlab_client is None:
+            self.establish_connection()
+        try:
+            project = self._gitlab_client.projects.get(project_id)
+            members = project.members.list(get_all=True, **(params or {}))
+            return [self._convert_gitlab_object_to_dict(m) for m in members]
+        except Exception as e:
+            self._logger.error(f"Erreur lors de la récupération des membres du projet {project_id}: {e}")
             return []
 
 
