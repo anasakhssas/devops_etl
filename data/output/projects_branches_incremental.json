@@ -1,5 +1,5 @@
 {
-  "anas": [
+  "71906513": [
     {
       "project_id": "71906513",
       "name": "main",
@@ -32,7 +32,7 @@
       "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/tree/main"
     }
   ],
-  "test4": [
+  "71866675": [
     {
       "project_id": "71866675",
       "name": "anastest",
@@ -90,7 +90,7 @@
       "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/tree/main"
     }
   ],
-  "devops_etl": [
+  "71825485": [
     {
       "project_id": "71825485",
       "name": "main",
@@ -122,7 +122,7 @@
       "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/tree/main"
     }
   ],
-  "gitlab1": [
+  "71824847": [
     {
       "project_id": "71824847",
       "name": "main",
@@ -152,7 +152,7 @@
       "web_url": "https://gitlab.com/anasakhssas1-group/gitlab1/-/tree/main"
     }
   ],
-  "devops_etl-deleted-71824428": [
+  "71824428": [
     {
       "project_id": "71824428",
       "name": "main",

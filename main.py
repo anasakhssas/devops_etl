@@ -1,11 +1,34 @@
 import os
 import json
 from dotenv import load_dotenv
+from datetime import datetime
+
+# --- Ajout: gestion de la date d'extraction incrémentielle ---
+LAST_EXTRACTION_FILE = "data/last_extraction_commits.txt"
+
+def get_last_extraction_date(resource_name):
+    """
+    Récupère la dernière date d'extraction pour une ressource (ex: 'commits').
+    Retourne une chaîne ISO 8601 ou None si non trouvée.
+    """
+    path = LAST_EXTRACTION_FILE
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            date_str = f.read().strip()
+            return date_str if date_str else None
+    return None
+
+def set_last_extraction_date(resource_name, date_str):
+    """
+    Sauvegarde la dernière date d'extraction pour une ressource.
+    """
+    os.makedirs(os.path.dirname(LAST_EXTRACTION_FILE), exist_ok=True)
+    with open(LAST_EXTRACTION_FILE, "w", encoding="utf-8") as f:
+        f.write(date_str)
 
 from src.extractors.gitlab.gitlab_client_improved import GitLabClient
 from src.extractors.gitlab.projects_gateway import GitLabProjectsGateway
 from src.utils import save_json  # 🔧 Fonction utilitaire pour sauvegarder les données
-
 # ---------------------------
 # 📁 FONCTIONS MÉTIERS
 # ---------------------------
@@ -171,9 +194,98 @@ def fetch_all_projects_members(projects_gateway, params=None):
         print(f"[DEBUG] {project_name} ({project_id}): {len(members)} members")
     return all_members
 
-# ---------------------------
-# 🚀 MAIN
-# ---------------------------
+def fetch_all_projects_commits_incremental(projects_gateway, params=None):
+    last_date = get_last_extraction_date("commits")  # format ISO 8601
+    if last_date:
+        if params is None:
+            params = {}
+        params = params.copy()
+        params["since"] = last_date
+    projects = projects_gateway.get_projects(params={"membership": True})
+    all_commits = {}
+    max_commit_date = last_date
+    for p in projects:
+        project_id = p.get("id")
+        project_name = p.get("name")
+        commits = projects_gateway.get_project_commits(project_id, params=params)
+        all_commits[project_id] = commits
+        for commit in commits:
+            commit_date = commit.get("created_at") or commit.get("committed_date")
+            # Ajout debug
+            # print(f"Commit: {commit.get('id')} - Date: {commit_date}")
+            if commit_date and (not max_commit_date or commit_date > max_commit_date):
+                max_commit_date = commit_date
+    # Debug: afficher les dates
+    print(f"[DEBUG] last_date: {last_date}, max_commit_date: {max_commit_date}")
+    # Met à jour la date de dernière extraction si de nouveaux commits
+    if max_commit_date and max_commit_date != last_date:
+        set_last_extraction_date("commits", max_commit_date)
+        print(f"[INFO] Date de dernière extraction mise à jour: {max_commit_date}")
+    else:
+        print("[INFO] Aucune nouvelle date à enregistrer.")
+    return all_commits
+
+# --- Ajout: gestion de la date d'extraction incrémentielle généralisée ---
+def get_last_extraction_date(resource_name):
+    """
+    Récupère la dernière date d'extraction pour une ressource (ex: 'commits', 'issues', 'merge_requests', etc.).
+    Retourne une chaîne ISO 8601 ou None si non trouvée.
+    """
+    path = f"data/last_extraction_{resource_name}.txt"
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            date_str = f.read().strip()
+            return date_str if date_str else None
+    return None
+
+def set_last_extraction_date(resource_name, date_str):
+    """
+    Sauvegarde la dernière date d'extraction pour une ressource.
+    """
+    path = f"data/last_extraction_{resource_name}.txt"
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(date_str)
+
+def fetch_all_projects_resource_incremental(projects_gateway, resource, params=None, date_field="updated_at", api_param="updated_after"):
+    """
+    Extraction incrémentielle générique pour une ressource projet (issues, merge_requests, pipelines, branches...).
+    """
+    last_date = get_last_extraction_date(resource)
+    if last_date:
+        if params is None:
+            params = {}
+        params = params.copy()
+        params[api_param] = last_date
+    projects = projects_gateway.get_projects(params={"membership": True})
+    all_items = {}
+    max_date = last_date
+    for p in projects:
+        project_id = p.get("id")
+        project_name = p.get("name")
+        if resource == "merge_requests":
+            items = projects_gateway.get_project_merge_requests(project_id, params=params)
+        elif resource == "issues":
+            items = projects_gateway.get_project_issues(project_id, params=params)
+        elif resource == "pipelines":
+            items = projects_gateway.get_project_pipelines(project_id, params=params)
+        elif resource == "branches":
+            items = projects_gateway.get_project_branches(project_id, params=params)
+        else:
+            items = []
+        all_items[project_id] = items
+        for item in items:
+            item_date = item.get(date_field)
+            if item_date and (not max_date or item_date > max_date):
+                max_date = item_date
+    # Debug: afficher les dates pour chaque ressource
+    print(f"[DEBUG] {resource} last_date: {last_date}, max_date: {max_date}")
+    if max_date and max_date != last_date:
+        set_last_extraction_date(resource, max_date)
+        print(f"[INFO] Date de dernière extraction {resource} mise à jour: {max_date}")
+    else:
+        print(f"[INFO] Aucune nouvelle date à enregistrer pour {resource}.")
+    return all_items
 
 def main():
     load_dotenv()
@@ -243,7 +355,49 @@ def main():
     all_members = fetch_all_projects_members(projects_gateway, params={"membership": True})
     save_json(all_members, "projects_members_full.json")
 
+    # Extraction incrémentielle des commits
+    print("\n📄 Extraction incrémentielle des commits...")
+    all_commits_incremental = fetch_all_projects_commits_incremental(projects_gateway)
+    save_json(all_commits_incremental, "projects_commits_incremental.json")
+
+    # Extraction incrémentielle des merge requests
+    print("\n📄 Extraction incrémentielle des merge requests...")
+    all_mrs_incremental = fetch_all_projects_resource_incremental(
+        projects_gateway, "merge_requests", date_field="updated_at", api_param="updated_after"
+    )
+    save_json(all_mrs_incremental, "projects_merge_requests_incremental.json")
+
+    # Extraction incrémentielle des issues
+    print("\n📄 Extraction incrémentielle des issues...")
+    all_issues_incremental = fetch_all_projects_resource_incremental(
+        projects_gateway, "issues", date_field="updated_at", api_param="updated_after"
+    )
+    save_json(all_issues_incremental, "projects_issues_incremental.json")
+
+    # Extraction incrémentielle des pipelines
+    print("\n📄 Extraction incrémentielle des pipelines...")
+    all_pipelines_incremental = fetch_all_projects_resource_incremental(
+        projects_gateway, "pipelines", date_field="updated_at", api_param="updated_after"
+    )
+    save_json(all_pipelines_incremental, "projects_pipelines_incremental.json")
+
+    # Extraction incrémentielle des branches (si applicable)
+    print("\n📄 Extraction incrémentielle des branches...")
+    all_branches_incremental = fetch_all_projects_resource_incremental(
+        projects_gateway, "branches", date_field="commit['committed_date']", api_param="since"
+    )
+    save_json(all_branches_incremental, "projects_branches_incremental.json")
+
     print("\n✅ Extraction terminée.")
 
+# Explication :
+# - projects_commits_full.json : contient TOUS les commits de chaque projet (toute l'historique)
+# - projects_commits_incremental.json : contient uniquement les commits NOUVEAUX depuis la dernière extraction
+# - projects_issues_full.json / projects_issues_incremental.json : même logique pour les issues
+# - projects_merge_requests_full.json / projects_merge_requests_incremental.json : même logique pour les merge requests
+# - projects_pipelines_full.json / projects_pipelines_incremental.json : même logique pour les pipelines
+# - projects_branches_full.json / projects_branches_incremental.json : même logique pour les branches
+#
+# Pour chaque ressource, *_full.json contient tout l'historique, *_incremental.json contient uniquement les nouveautés depuis la dernière extraction.
 if __name__ == "__main__":
     main()
