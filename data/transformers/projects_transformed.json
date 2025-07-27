@@ -1,0 +1,67 @@
+[
+  {
+    "ID Projet": 71906513,
+    "Nom Project": "anas",
+    "URL Projet": "https://gitlab.com/anasakhssas1-group/anas",
+    "http url au repo": "https://gitlab.com/anasakhssas1-group/anas.git",
+    "Chemin Complet": "anasakhssas1-group/anas",
+    "Groupe Racine": "anasakhssas1-group",
+    "Groupe Parent": null,
+    "Visibilité": "private",
+    "Archivé": false,
+    "Créé le": "2025-07-24 17:41:37.529000",
+    "Dernière activité": "2025-07-27 09:53:49.971000"
+  },
+  {
+    "ID Projet": 71866675,
+    "Nom Project": "test4",
+    "URL Projet": "https://gitlab.com/anasakhssas1-group/test4",
+    "http url au repo": "https://gitlab.com/anasakhssas1-group/test4.git",
+    "Chemin Complet": "anasakhssas1-group/test4",
+    "Groupe Racine": "anasakhssas1-group",
+    "Groupe Parent": null,
+    "Visibilité": "private",
+    "Archivé": false,
+    "Créé le": "2025-07-23 14:26:39.679000",
+    "Dernière activité": "2025-07-27 10:08:41.504000"
+  },
+  {
+    "ID Projet": 71825485,
+    "Nom Project": "devops_etl",
+    "URL Projet": "https://gitlab.com/anasakhssas1-group/devops_etl",
+    "http url au repo": "https://gitlab.com/anasakhssas1-group/devops_etl.git",
+    "Chemin Complet": "anasakhssas1-group/devops_etl",
+    "Groupe Racine": "anasakhssas1-group",
+    "Groupe Parent": null,
+    "Visibilité": "private",
+    "Archivé": false,
+    "Créé le": "2025-07-22 09:09:52.875000",
+    "Dernière activité": "2025-07-27 10:05:11.514000"
+  },
+  {
+    "ID Projet": 71824847,
+    "Nom Project": "gitlab1",
+    "URL Projet": "https://gitlab.com/anasakhssas1-group/gitlab1",
+    "http url au repo": "https://gitlab.com/anasakhssas1-group/gitlab1.git",
+    "Chemin Complet": "anasakhssas1-group/gitlab1",
+    "Groupe Racine": "anasakhssas1-group",
+    "Groupe Parent": null,
+    "Visibilité": "private",
+    "Archivé": false,
+    "Créé le": "2025-07-22 08:51:26.845000",
+    "Dernière activité": "2025-07-27 10:22:40.260000"
+  },
+  {
+    "ID Projet": 71824428,
+    "Nom Project": "devops_etl-deleted-71824428",
+    "URL Projet": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428",
+    "http url au repo": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428.git",
+    "Chemin Complet": "anasakhssas1-group/devops_etl-deleted-71824428",
+    "Groupe Racine": "anasakhssas1-group",
+    "Groupe Parent": null,
+    "Visibilité": "private",
+    "Archivé": false,
+    "Créé le": "2025-07-22 08:38:13.469000",
+    "Dernière activité": "2025-07-22 08:50:45.303000"
+  }
+]

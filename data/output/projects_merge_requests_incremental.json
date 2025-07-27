@@ -1,16 +1,21 @@
 {
+  "71994072": [],
   "71906513": [],
-  "71866675": [
+  "71866675": [],
+  "71825485": [
     {
-      "project_id": 71866675,
-      "id": 402495657,
+      "project_id": 71825485,
+      "id": 402618502,
       "iid": 3,
-      "title": "commit2",
+      "title": "mergeR_0747_2707Draft: Branche 0746 2707",
       "description": "",
-      "state": "merged",
-      "created_at": "2025-07-25T16:54:10.145Z",
-      "updated_at": "2025-07-25T16:54:18.526Z",
-      "merged_by": {
+      "state": "closed",
+      "created_at": "2025-07-27T18:47:28.878Z",
+      "updated_at": "2025-07-27T18:48:10.916Z",
+      "merged_by": null,
+      "merge_user": null,
+      "merged_at": null,
+      "closed_by": {
         "id": 28853258,
         "username": "anasakhssas1",
         "public_email": null,
@@ -20,22 +25,10 @@
         "avatar_url": "https://secure.gravatar.com/avatar/6d4b14a0b791b4588dbdd1ff5fb0e94b7ea85856eecb5c2aea6597f2d1d84b81?s=80&d=identicon",
         "web_url": "https://gitlab.com/anasakhssas1"
       },
-      "merge_user": {
-        "id": 28853258,
-        "username": "anasakhssas1",
-        "public_email": null,
-        "name": "Anas Akhssas",
-        "state": "active",
-        "locked": false,
-        "avatar_url": "https://secure.gravatar.com/avatar/6d4b14a0b791b4588dbdd1ff5fb0e94b7ea85856eecb5c2aea6597f2d1d84b81?s=80&d=identicon",
-        "web_url": "https://gitlab.com/anasakhssas1"
-      },
-      "merged_at": "2025-07-25T16:54:18.057Z",
-      "closed_by": null,
-      "closed_at": null,
+      "closed_at": "2025-07-27T18:48:10.943Z",
       "target_branch": "main",
-      "source_branch": "branche2",
-      "user_notes_count": 0,
+      "source_branch": "branche_0746_2707",
+      "user_notes_count": 1,
       "upvotes": 0,
       "downvotes": 0,
       "author": {
@@ -51,8 +44,8 @@
       "assignees": [],
       "assignee": null,
       "reviewers": [],
-      "source_project_id": 71866675,
-      "target_project_id": 71866675,
+      "source_project_id": 71825485,
+      "target_project_id": 71825485,
       "labels": [],
       "draft": false,
       "imported": false,
@@ -60,41 +53,40 @@
       "work_in_progress": false,
       "milestone": null,
       "merge_when_pipeline_succeeds": false,
-      "merge_status": "can_be_merged",
+      "merge_status": "cannot_be_merged",
       "detailed_merge_status": "not_open",
       "merge_after": null,
-      "sha": "8f18c6a9a354ae6daa6888085f639e68bc76c155",
-      "merge_commit_sha": "07e36e426fdf359ef3bfcc52f278edc9c768ca21",
+      "sha": "51e92510fe424361f0fd6d9844f6cdefcba8b743",
+      "merge_commit_sha": null,
       "squash_commit_sha": null,
       "discussion_locked": null,
-      "should_remove_source_branch": true,
-      "force_remove_source_branch": true,
-      "prepared_at": "2025-07-25T16:54:11.342Z",
+      "should_remove_source_branch": null,
+      "force_remove_source_branch": false,
+      "prepared_at": "2025-07-27T18:47:29.927Z",
       "reference": "!3",
       "references": {
         "short": "!3",
         "relative": "!3",
-        "full": "anasakhssas1-group/test4!3"
+        "full": "anasakhssas1-group/devops_etl!3"
       },
-      "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/merge_requests/3",
+      "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/merge_requests/3",
       "time_stats": {
         "time_estimate": 0,
         "total_time_spent": 0,
         "human_time_estimate": null,
         "human_total_time_spent": null
       },
-      "squash": false,
-      "squash_on_merge": false,
+      "squash": true,
+      "squash_on_merge": true,
       "task_completion_status": {
         "count": 0,
         "completed_count": 0
       },
-      "has_conflicts": false,
+      "has_conflicts": true,
       "blocking_discussions_resolved": true,
       "approvals_before_merge": null
     }
   ],
-  "71825485": [],
   "71824847": [],
   "71824428": []
 }
