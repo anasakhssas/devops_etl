@@ -1,0 +1,40 @@
+[
+  {
+    "id": 28853258,
+    "username": "anasakhssas1",
+    "public_email": null,
+    "name": "Anas Akhssas",
+    "state": "active",
+    "locked": false,
+    "avatar_url": "https://secure.gravatar.com/avatar/6d4b14a0b791b4588dbdd1ff5fb0e94b7ea85856eecb5c2aea6597f2d1d84b81?s=80&d=identicon",
+    "web_url": "https://gitlab.com/anasakhssas1",
+    "access_level": 50,
+    "created_at": "2025-07-28T10:51:58.554Z",
+    "expires_at": null,
+    "membership_state": "active"
+  },
+  {
+    "id": 29206795,
+    "username": "salmaeddib03taza",
+    "public_email": null,
+    "name": "salma eddib",
+    "state": "active",
+    "locked": false,
+    "avatar_url": "https://secure.gravatar.com/avatar/8553fd89d303a920e17165e3907d2390aba5298c077ea9dd88423aa4fedc3ec3?s=80&d=identicon",
+    "web_url": "https://gitlab.com/salmaeddib03taza",
+    "access_level": 30,
+    "created_at": "2025-07-28T10:51:58.825Z",
+    "created_by": {
+      "id": 28853258,
+      "username": "anasakhssas1",
+      "public_email": null,
+      "name": "Anas Akhssas",
+      "state": "active",
+      "locked": false,
+      "avatar_url": "https://secure.gravatar.com/avatar/6d4b14a0b791b4588dbdd1ff5fb0e94b7ea85856eecb5c2aea6597f2d1d84b81?s=80&d=identicon",
+      "web_url": "https://gitlab.com/anasakhssas1"
+    },
+    "expires_at": null,
+    "membership_state": "active"
+  }
+]

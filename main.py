@@ -368,11 +368,19 @@ def fetch_all_projects_events_incremental(projects_gateway, params=None, date_fi
         events = projects_gateway.get_project_events(project_id, params=params)
         # Conversion en dict pour chaque event
         events_dicts = [e.attributes if hasattr(e, "attributes") else e for e in events]
-        all_events[project_id] = events_dicts
+        filtered_events = []
         for event in events_dicts:
             event_date = event.get(date_field)
-            if event_date and (not max_date or event_date > max_date):
+            if not event_date:
+                continue
+            if last_date:
+                if event_date > last_date:
+                    filtered_events.append(event)
+            else:
+                filtered_events.append(event)
+            if not max_date or event_date > max_date:
                 max_date = event_date
+        all_events[project_id] = filtered_events
     print(f"[DEBUG] events last_date: {last_date}, max_date: {max_date}")
     if max_date and max_date != last_date:
         set_last_extraction_date("events", max_date)
