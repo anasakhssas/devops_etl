@@ -68,3 +68,35 @@ class GitLabUsersGateway:
         except Exception as e:
             self.client._logger.error(f"Erreur lors de la récupération des utilisateurs: {e}")
             return []
+
+    def get_all_groups(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        Récupère tous les groupes de l'instance GitLab (pagination gérée).
+
+        Args:
+            params: Paramètres de filtrage optionnels.
+
+        Returns:
+            Liste de dictionnaires représentant les groupes.
+        """
+        try:
+            if not self.client.is_connected:
+                self.client.connect()
+            params = params.copy() if params else {}
+            params["per_page"] = 100
+            endpoint = "/groups"
+            all_groups = []
+            page = 1
+            while True:
+                params["page"] = page
+                response = self.client._gitlab_client.http_get(endpoint, params=params)
+                if not response or not isinstance(response, list):
+                    break
+                all_groups.extend(response)
+                if len(response) < params["per_page"]:
+                    break
+                page += 1
+            return all_groups
+        except Exception as e:
+            self.client._logger.error(f"Erreur lors de la récupération des groupes: {e}")
+            return []
