@@ -19,38 +19,41 @@ class UsersTransformer:
 
         transformed = []
         for user in data:
-            created_at = parse_date(user.get("created_at"))
             transformed_user = {
                 "id": user.get("id"),
-                "name": user.get("name"),
                 "username": user.get("username"),
+                "name": user.get("name"),
                 "email": user.get("email"),
                 "is_admin": user.get("is_admin", False),
                 "state": user.get("state"),
-                "created_at": created_at,
-                "last_activity_on": user.get("last_activity_on"),
-                "web_url": user.get("web_url")
+                "web_url": user.get("web_url"),
+                "created_at": parse_date(user.get("created_at")),
+                "last_activity_on": parse_date(user.get("last_activity_on")),
+                "group": user.get("group", None)  # si tu as ajouté manuellement ce champ
             }
             transformed.append(transformed_user)
         return transformed
+
 
 if __name__ == "__main__":
     import json
     import os
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/current_user_incremental.json"))
-    output_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/users_transformed.json"))
+    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/all_users.json"))
+    output_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/transformers/users_transformed.json"))
 
     if not os.path.exists(input_json_path):
         print(f"[ERREUR] Fichier introuvable : {input_json_path}")
         exit(1)
 
     with open(input_json_path, "r", encoding="utf-8") as f:
-        users = json.load(f)
+        raw_users = json.load(f)
 
     transformer = UsersTransformer()
-    transformed = transformer.transform(users)
+    transformed_users = transformer.transform(raw_users)
 
     with open(output_json_path, "w", encoding="utf-8") as f:
-        json.dump(transformed, f, default=str, ensure_ascii=False, indent=2)
+        json.dump(transformed_users, f, default=str, ensure_ascii=False, indent=2)
+
+    print(f"[✅] Données transformées enregistrées dans : {output_json_path}")
