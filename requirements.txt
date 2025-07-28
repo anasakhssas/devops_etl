@@ -1,0 +1,18 @@
+# requirements.txt
+
+# Ajoutez ici toutes les dépendances nécessaires, par exemple :
+python-gitlab           # API GitLab
+requests                # Requêtes HTTP (SonarQube, Dependency Track, DefectDojo)
+python-dotenv           # Gestion des fichiers .env
+pandas                  # Manipulation de données
+openpyxl                # Export Excel
+PyYAML                  # Lecture/écriture YAML
+defectdojo-api          # Client DefectDojo (non officiel)
+# dependency-track-api-client # Client Dependency Track (si utilisé, sinon requests)
+tqdm                    # Barre de progression pour ETL
+tabulate                # Affichage tabulaire (optionnel)
+dateparser              # Parsing flexible des dates
+python-dateutil         # Manipulation avancée des dates
+pytest                  # Tests unitaires
+pytest-cov              # Couverture de tests
+# ...existing code...
