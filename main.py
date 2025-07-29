@@ -4,6 +4,12 @@ from dotenv import load_dotenv
 from datetime import datetime
 from dateutil.parser import parse as parse_date  # Ajout pour gestion robuste des dates
 
+from src.extractors.gitlab.gitlab_client_improved import GitLabClient
+from src.extractors.gitlab.projects_gateway import GitLabProjectsGateway
+from src.extractors.gitlab.users_gateway import GitLabUsersGateway  # Ajout pour users/groups
+from src.utils import save_json  # 🔧 Fonction utilitaire pour sauvegarder les données
+from src.utils import get_last_extraction_date, set_last_extraction_date  # Ajout pour users/groups
+
 # --- Ajout: gestion de la date d'extraction incrémentielle ---
 LAST_EXTRACTION_FILE = "data/last_extraction_commits.txt"
 
@@ -27,9 +33,6 @@ def set_last_extraction_date(resource_name, date_str):
     with open(LAST_EXTRACTION_FILE, "w", encoding="utf-8") as f:
         f.write(date_str)
 
-from src.extractors.gitlab.gitlab_client_improved import GitLabClient
-from src.extractors.gitlab.projects_gateway import GitLabProjectsGateway
-from src.utils import save_json  # 🔧 Fonction utilitaire pour sauvegarder les données
 # ---------------------------
 # 📁 FONCTIONS MÉTIERS
 # ---------------------------
@@ -354,11 +357,6 @@ def fetch_all_projects_events_incremental(projects_gateway, params=None, date_fi
     Extraction incrémentielle des events pour chaque projet.
     """
     last_date = get_last_extraction_date("events")
-    if last_date:
-        if params is None:
-            params = {}
-        params = params.copy()
-        params[api_param] = last_date
     projects = projects_gateway.get_projects(params={"membership": True})
     all_events = {}
     max_date = last_date
@@ -389,6 +387,58 @@ def fetch_all_projects_events_incremental(projects_gateway, params=None, date_fi
         print(f"[INFO] Aucune nouvelle date à enregistrer pour events.")
     return all_events
 
+def fetch_all_users(users_gateway):
+    last_date = get_last_extraction_date("users")
+    print("\n👥 Extraction incrémentielle des utilisateurs internes GitLab...")
+    all_users = users_gateway.get_all_users()
+    # Filtrage manuel par date
+    if last_date:
+        filtered_users = [
+            u for u in all_users
+            if (u.get("updated_at") and u["updated_at"] > last_date)
+            or (u.get("created_at") and u["created_at"] > last_date)
+        ]
+    else:
+        filtered_users = all_users
+    print(f"[INFO] Nombre d'utilisateurs internes extraits : {len(filtered_users)}")
+    save_json(filtered_users, "all_users_incremental.json")
+    # Mise à jour de la date d'extraction
+    if filtered_users:
+        dates = [
+            u.get("updated_at", u.get("created_at"))
+            for u in filtered_users if u.get("updated_at") or u.get("created_at")
+        ]
+        if dates:
+            latest_date = max(dates)
+            set_last_extraction_date("users", latest_date)
+            print(f"[INFO] Date d'extraction utilisateurs mise à jour : {latest_date}")
+
+def fetch_all_groups(users_gateway):
+    last_date = get_last_extraction_date("groups")
+    print("\n👥 Extraction incrémentielle des groupes GitLab...")
+    all_groups = users_gateway.get_all_groups()
+    # Filtrage manuel par date
+    if last_date:
+        filtered_groups = [
+            g for g in all_groups
+            if (g.get("updated_at") and g["updated_at"] > last_date)
+            or (g.get("created_at") and g["created_at"] > last_date)
+        ]
+    else:
+        filtered_groups = all_groups
+    print(f"[INFO] Nombre de groupes extraits : {len(filtered_groups)}")
+    save_json(filtered_groups, "all_groups_incremental.json")
+    # Mise à jour de la date d'extraction
+    if filtered_groups:
+        dates = [
+            g.get("updated_at", g.get("created_at"))
+            for g in filtered_groups if g.get("updated_at") or g.get("created_at")
+        ]
+        if dates:
+            latest_date = max(dates)
+            set_last_extraction_date("groups", latest_date)
+            print(f"[INFO] Date d'extraction groupes mise à jour : {latest_date}")
+
 def main():
     load_dotenv()
 
@@ -411,6 +461,7 @@ def main():
 
     client = GitLabClient(config)
     projects_gateway = GitLabProjectsGateway(client)
+    users_gateway = GitLabUsersGateway(client)  # Ajout pour users/groups
 
     # 📥 Étape 1 : Projets
     print("\n📂 Récupération des projets...")
@@ -498,6 +549,21 @@ def main():
     all_events_incremental = fetch_all_projects_events_incremental(projects_gateway)
     save_json(all_events_incremental, "projects_events_incremental.json")
 
+    # Extraction des membres d'un groupe GitLab (non incrémental)
+    group_id = os.getenv("GITLAB_GROUP_ID")
+    if not group_id:
+        raise ValueError("❌ L'identifiant du groupe GitLab (GITLAB_GROUP_ID) est manquant dans le fichier .env.")
+    print(f"\n👥 Extraction des membres du groupe GitLab {group_id}...")
+    group_members = users_gateway.get_group_members(int(group_id))
+    print(f"[INFO] Nombre de membres dans le groupe : {len(group_members)}")
+    save_json(group_members, "group_members.json")
+
+    # Extraction incrémentielle des utilisateurs internes
+    fetch_all_users(users_gateway)
+
+    # Extraction incrémentielle des groupes
+    fetch_all_groups(users_gateway)
+
     print("\n✅ Extraction terminée.")
 
 # Explication :
@@ -518,6 +584,11 @@ if __name__ == "__main__":
 # - projects_issues_full.json / projects_issues_incremental.json : même logique pour les issues
 # - projects_merge_requests_full.json / projects_merge_requests_incremental.json : même logique pour les merge requests
 # - projects_pipelines_full.json / projects_pipelines_incremental.json : même logique pour les pipelines
+# - projects_branches_full.json / projects_branches_incremental.json : même logique pour les branches
+# - projects_events_full.json / projects_events_incremental.json : même logique pour les events
+#
+# Pour chaque ressource, *_full.json contient tout l'historique, *_incremental.json contient uniquement les nouveautés depuis la dernière extraction.
+# Pour chaque ressource, *_full.json contient tout l'historique, *_incremental.json contient uniquement les nouveautés depuis la dernière extraction.
 # - projects_branches_full.json / projects_branches_incremental.json : même logique pour les branches
 # - projects_events_full.json / projects_events_incremental.json : même logique pour les events
 #

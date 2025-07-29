@@ -139,14 +139,63 @@ python -m src.main --source gitlab
 # Construire l'image
 docker build -t devops-etl .
 
-# Exécuter le conteneur
+# Exécuter le conteneur (avec persistance des données)
 docker run --env-file .env -v ./data:/app/data devops-etl
 ```
 
-Avec Docker Compose :
+### Configuration du fichier .env
+
+Créez un fichier `.env` à la racine du projet pour vos variables d'environnement (exemple : jetons d'API, URLs, etc.).  
+Ce fichier sera chargé automatiquement par le conteneur.
+
+### Utilisation des volumes
+
+Le montage du volume `-v ./data:/app/data` permet de conserver les fichiers extraits et les rapports générés en dehors du conteneur.
+
+### Docker Compose
+
+Un exemple de fichier `docker-compose.yml` :
+
+```yaml
+version: "3.8"
+services:
+  devops-etl:
+    build: .
+    container_name: devops-etl
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+```
+
+Lancez le projet avec :
 
 ```bash
-docker-compose up -d
+docker-compose up --build
+```
+
+### Développement avec Docker
+
+Pour lancer un shell interactif dans le conteneur :
+
+```bash
+docker run -it --env-file .env -v ./data:/app/data devops-etl /bin/bash
+```
+
+## Docker
+
+Pour builder et lancer le projet dans un conteneur Docker :
+
+```bash
+docker build -t devops-etl .
+docker run --env-file .env devops-etl
+```
+
+Pour utiliser docker-compose (si besoin) :
+
+```bash
+docker-compose up --build
 ```
 
 ## KPIs disponibles
