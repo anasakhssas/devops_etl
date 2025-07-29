@@ -17,3 +17,5 @@ def get_db_connection():
     except Exception as e:
         print(f"[❌] Erreur lors de la connexion à la base de données : {e}")
         raise
+
+

@@ -1,9 +1,11 @@
+# src/loaders/load_users.py
+
 import json
 import os
-import psycopg2
-from database.db_connection import get_db_connection
+from src.loaders.database.db_connection import get_db_connection
 
-def load_users(json_path: str):
+
+def load_users(json_path="data/transformers/users_transformed.json"):
     if not os.path.exists(json_path):
         print(f"[❌] Fichier introuvable : {json_path}")
         return
@@ -46,14 +48,9 @@ def load_users(json_path: str):
         print(f"[✅] {len(users)} utilisateurs insérés/actualisés avec succès.")
 
     except Exception as e:
-        print(f"[❌] Erreur lors de l'insertion : {e}")
+        print(f"[❌] Erreur lors de l'insertion des utilisateurs : {e}")
     finally:
         if cursor:
             cursor.close()
         if conn:
             conn.close()
-
-if __name__ == "__main__":
-    input_path = "data/transformers/users_transformed.json"
-    load_users(input_path)
-    
