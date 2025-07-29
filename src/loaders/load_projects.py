@@ -3,58 +3,51 @@ import json
 import psycopg2
 from datetime import datetime
 from dotenv import load_dotenv
+from database.db_connection import get_db_connection
 
-def load_json(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+REQUIRED_KEYS = ["id", "name", "created_at", "web_url", "namespace", "visibility", "default_branch"]
 
 def insert_projects(conn, projects):
     with conn.cursor() as cur:
-        for p in projects:
-            cur.execute("""
-                INSERT INTO projects (
-                    id, name, description, created_at, web_url,
-                    namespace, visibility, default_branch
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO NOTHING;
-            """, (
-                p["id"],
-                p["name"],
-                p.get("description"),
-                datetime.fromisoformat(p["created_at"]) if p.get("created_at") else None,
-                p["web_url"],
-                p.get("namespace"),
-                p.get("visibility"),
-                p.get("default_branch")
-            ))
+        for project in projects:
+            if not all(key in project for key in REQUIRED_KEYS):
+                print(f"[⚠️] Projet ignoré : clé(s) manquante(s) dans {project}")
+                continue
+            try:
+                cur.execute("""
+                    INSERT INTO projects (
+                        id, name, description, created_at,
+                        web_url, namespace, visibility, default_branch
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (id) DO NOTHING;
+                """, (
+                    project["id"],
+                    project.get("name"),
+                    project.get("description"),
+                    datetime.fromisoformat(project["created_at"]) if project.get("created_at") else None,
+                    project.get("web_url"),
+                    project.get("namespace"),
+                    project.get("visibility"),
+                    project.get("default_branch")
+                ))
+            except Exception as e:
+                print(f"[❌] Erreur lors de l'insertion du projet ID={project.get('id')} : {e}")
         conn.commit()
 
 def main():
     load_dotenv()
-
-    db_params = {
-        "host": os.getenv("PGHOST"),
-        "port": os.getenv("PGPORT"),
-        "user": os.getenv("PGUSER"),
-        "password": os.getenv("PGPASSWORD"),
-        "dbname": os.getenv("PGDATABASE")
-    }
-
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.abspath(os.path.join(base_dir, "../../data/transformers/projects_transformed.json"))
-
-    if not os.path.exists(json_path):
-        print(f"[ERREUR] Fichier JSON introuvable : {json_path}")
+    input_path = "data/transformers/projects_transformed.json"
+    if not os.path.exists(input_path):
+        print(f"[ERREUR] Fichier JSON non trouvé : {input_path}")
         return
 
-    projects = load_json(json_path)
+    with open(input_path, "r", encoding="utf-8") as f:
+        projects = json.load(f)
 
-    try:
-        with psycopg2.connect(**db_params) as conn:
-            insert_projects(conn, projects)
-            print("✅ Données des projets insérées avec succès dans la base de données.")
-    except Exception as e:
-        print(f"[❌] Erreur lors de l'insertion des projets : {e}")
+    conn = get_db_connection()
+    insert_projects(conn, projects)
+    conn.close()
+    print("✅ Données des projets insérées avec succès dans la base de données.")
 
 if __name__ == "__main__":
     main()
