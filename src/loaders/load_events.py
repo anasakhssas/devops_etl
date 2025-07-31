@@ -1,6 +1,8 @@
 import os
 import json
+import sys
 from datetime import datetime
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.loaders.database.db_connection import get_db_connection  # adapte le chemin si besoin
 
 def load_events(json_path="data/transformers/events_transformed.json"):

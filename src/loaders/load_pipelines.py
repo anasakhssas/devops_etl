@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.loaders.database.db_connection import get_db_connection
 
 def load_pipelines(json_path="data/transformers/pipelines_transformed.json"):
