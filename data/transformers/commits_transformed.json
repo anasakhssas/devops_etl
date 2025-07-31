@@ -1,32 +1,12 @@
 [
   {
-    "id": "94d67cc3ebd78d656c188be92080fef98c471951",
-    "short_id": "94d67cc3",
-    "title": "Merge branch 'branch1' into 'main'",
+    "id": "53c5767e90dded6a83b2a70c6d4d128df0727560",
+    "short_id": "53c5767e",
+    "title": "Edit LICENSE",
     "author_name": "Anas Akhssas",
     "author_email": "anasakhssas1@gmail.com",
-    "created_at": null,
-    "message": "Merge branch 'branch1' into 'main'\n\nAdd new file\n\nSee merge request anasakhssas1-group/anas!1",
-    "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/commit/94d67cc3ebd78d656c188be92080fef98c471951"
-  },
-  {
-    "id": "7ea1bc418358ce6c97ce072cd429cad49c4408aa",
-    "short_id": "7ea1bc41",
-    "title": "Add new file",
-    "author_name": "Anas Akhssas",
-    "author_email": "anasakhssas1@gmail.com",
-    "created_at": null,
-    "message": "Add new file",
-    "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/commit/7ea1bc418358ce6c97ce072cd429cad49c4408aa"
-  },
-  {
-    "id": "c0bea9bfa83995f89c24517f2c87b120e5adf547",
-    "short_id": "c0bea9bf",
-    "title": "Initial commit",
-    "author_name": "Anas Akhssas",
-    "author_email": "anasakhssas1@gmail.com",
-    "created_at": null,
-    "message": "Initial commit",
-    "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/commit/c0bea9bfa83995f89c24517f2c87b120e5adf547"
+    "created_at": "2025-07-31T10:19:00.000+00:00",
+    "message": "Edit LICENSE",
+    "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/commit/53c5767e90dded6a83b2a70c6d4d128df0727560"
   }
 ]

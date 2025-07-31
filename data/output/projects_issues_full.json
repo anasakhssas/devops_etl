@@ -3,7 +3,88 @@
   "test": [],
   "anas": [],
   "test4": [],
-  "devops_etl": [],
+  "devops_etl": [
+    {
+      "project_id": 71825485,
+      "id": 171352284,
+      "iid": 1,
+      "title": "issue_1208_3107",
+      "description": "",
+      "state": "closed",
+      "created_at": "2025-07-31T11:08:09.929Z",
+      "updated_at": "2025-07-31T11:08:21.425Z",
+      "closed_at": "2025-07-31T11:08:21.416Z",
+      "closed_by": {
+        "id": 28853258,
+        "username": "anasakhssas1",
+        "public_email": null,
+        "name": "Anas Akhssas",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://secure.gravatar.com/avatar/6d4b14a0b791b4588dbdd1ff5fb0e94b7ea85856eecb5c2aea6597f2d1d84b81?s=80&d=identicon",
+        "web_url": "https://gitlab.com/anasakhssas1"
+      },
+      "labels": [],
+      "milestone": null,
+      "assignees": [],
+      "author": {
+        "id": 28853258,
+        "username": "anasakhssas1",
+        "public_email": null,
+        "name": "Anas Akhssas",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://secure.gravatar.com/avatar/6d4b14a0b791b4588dbdd1ff5fb0e94b7ea85856eecb5c2aea6597f2d1d84b81?s=80&d=identicon",
+        "web_url": "https://gitlab.com/anasakhssas1"
+      },
+      "type": "ISSUE",
+      "assignee": null,
+      "user_notes_count": 0,
+      "merge_requests_count": 0,
+      "upvotes": 0,
+      "downvotes": 0,
+      "due_date": null,
+      "confidential": false,
+      "discussion_locked": null,
+      "issue_type": "issue",
+      "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/issues/1",
+      "time_stats": {
+        "time_estimate": 0,
+        "total_time_spent": 0,
+        "human_time_estimate": null,
+        "human_total_time_spent": null
+      },
+      "task_completion_status": {
+        "count": 0,
+        "completed_count": 0
+      },
+      "weight": null,
+      "blocking_issues_count": 0,
+      "has_tasks": true,
+      "task_status": "",
+      "_links": {
+        "self": "https://gitlab.com/api/v4/projects/71825485/issues/1",
+        "notes": "https://gitlab.com/api/v4/projects/71825485/issues/1/notes",
+        "award_emoji": "https://gitlab.com/api/v4/projects/71825485/issues/1/award_emoji",
+        "project": "https://gitlab.com/api/v4/projects/71825485",
+        "closed_as_duplicate_of": null
+      },
+      "references": {
+        "short": "#1",
+        "relative": "#1",
+        "full": "anasakhssas1-group/devops_etl#1"
+      },
+      "severity": "UNKNOWN",
+      "moved_to_id": null,
+      "imported": false,
+      "imported_from": "none",
+      "service_desk_reply_to": null,
+      "epic_iid": null,
+      "epic": null,
+      "iteration": null,
+      "health_status": null
+    }
+  ],
   "gitlab1": [],
   "devops_etl-deleted-71824428": []
 }

@@ -14,5 +14,5 @@ COPY . .
 # Variable d'environnement pour éviter le buffering
 ENV PYTHONUNBUFFERED=1
 
-# Définir la commande par défaut
-CMD ["python", "main.py"]
+# Initialiser la base de données Airflow au démarrage et lancer le webserver
+CMD ["sh", "-c", "airflow db init && airflow webserver --port 8080"]

@@ -1,6 +1,8 @@
 import os
 import json
+import sys
 from datetime import datetime
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.loaders.database.db_connection import get_db_connection  # adapte si nécessaire
 
 def load_branches(json_path="data/transformers/branches_transformed.json"):
@@ -64,3 +66,8 @@ def load_branches(json_path="data/transformers/branches_transformed.json"):
         if conn:
             conn.close()
 
+# Optionnel : test local
+if __name__ == "__main__":
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(base_dir, "../../data/transformers/branches_transformed.json")
+    load_branches(json_path)

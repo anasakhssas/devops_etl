@@ -198,20 +198,30 @@ class GitLabDeveloperRepository(DeveloperRepository):
         Returns:
             Entité Developer correspondante
         """
-        # Extraction des données pertinentes
         user_id = str(user_data['id'])
         name = user_data.get('name', '')
         username = user_data.get('username', '')
-        email = user_data.get('email', '')
-        
+        email = user_data.get('email') if user_data.get('email') not in (None, '', 'null') else None
+
         # Dates de création
         created_at = None
-        if 'created_at' in user_data:
+        if 'created_at' in user_data and user_data['created_at']:
             try:
                 created_at = datetime.fromisoformat(user_data['created_at'].replace('Z', '+00:00'))
             except (ValueError, TypeError):
                 pass
-        
+
+        # Dernière activité
+        last_activity_on = None
+        if 'last_activity_on' in user_data and user_data['last_activity_on']:
+            try:
+                last_activity_on = datetime.fromisoformat(user_data['last_activity_on'])
+            except (ValueError, TypeError):
+                pass
+
+        # Groupe (si fourni)
+        group = user_data.get('group', None)
+
         # Informations supplémentaires
         metadata = {
             'state': user_data.get('state', ''),
@@ -223,9 +233,10 @@ class GitLabDeveloperRepository(DeveloperRepository):
             'is_bot': self._is_bot(user_data),
             'role': user_data.get('role'),
             'role_name': user_data.get('role_name'),
+            'last_activity_on': last_activity_on,
+            'group': group
         }
-        
-        # Création de l'entité Developer
+
         return Developer(
             id=user_id,
             name=name,

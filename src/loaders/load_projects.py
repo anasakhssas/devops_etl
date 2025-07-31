@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.loaders.database.db_connection import get_db_connection
 
 def load_projects(json_path="data/transformers/projects_transformed.json"):
@@ -54,3 +56,10 @@ def load_projects(json_path="data/transformers/projects_transformed.json"):
             cursor.close()
         if conn:
             conn.close()
+
+
+# Optionnel : test local
+if __name__ == "__main__":
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(base_dir, "../../data/transformers/projects_transformed.json")
+    load_projects(json_path)

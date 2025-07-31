@@ -1,4 +1,8 @@
 import os
+import sys
+# Ajoute le répertoire racine du projet au sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 import json
 from datetime import datetime
 from src.loaders.database.db_connection import get_db_connection  # Chemin à adapter si besoin
@@ -46,7 +50,7 @@ def load_commits(json_path="data/transformers/commits_transformed.json"):
                     "title": commit.get("title"),
                     "author_name": commit.get("author_name"),
                     "author_email": commit.get("author_email"),
-                    "created_at": datetime.fromisoformat(commit["created_at"]) if commit.get("created_at") else None,
+                    "created_at": datetime.fromisoformat(commit["created_at"].replace("Z", "+00:00")) if commit.get("created_at") else None,
                     "message": commit.get("message"),
                     "web_url": commit.get("web_url")
                 }

@@ -1,6 +1,8 @@
 import os
 import json
+import sys
 from datetime import datetime
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.loaders.database.db_connection import get_db_connection  # Assure-toi que le chemin est correct
 
 def load_issues(json_path="data/transformers/issues_transformed.json"):
@@ -83,3 +85,9 @@ def load_issues(json_path="data/transformers/issues_transformed.json"):
             cursor.close()
         if conn:
             conn.close()
+
+# Optionnel : test local
+if __name__ == "__main__":
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(base_dir, "../../data/transformers/issues_transformed.json")
+    load_issues(json_path)

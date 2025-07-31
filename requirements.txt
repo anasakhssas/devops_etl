@@ -15,4 +15,7 @@ dateparser              # Parsing flexible des dates
 python-dateutil         # Manipulation avancée des dates
 pytest                  # Tests unitaires
 pytest-cov              # Couverture de tests
-# ...existing code...
+apache-airflow[postgres]==2.7.3           # Orchestration ETL avec Airflow + support Postgres
+Flask-Session==0.4.0           # Version compatible avec Airflow 2.7.x
+Flask==2.2.5                   # Version compatible avec Airflow 2.7.x
+# Veillez à NE PAS inclure python-daemon sur Windows

@@ -1,44 +1,9 @@
 [
   {
-    "name": "main",
-    "commit_id": "94d67cc3ebd78d656c188be92080fef98c471951",
-    "commit_message": "Merge branch 'branch1' into 'main'\n\nAdd new file\n\nSee merge request anasakhssas1-group/anas!1",
+    "name": "branche_1220_3107",
+    "commit_id": "63aac71840fd594012a1d8bad76734a3f5427ae8",
+    "commit_message": "Edit README.md",
     "created_at": null,
-    "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/tree/main"
-  },
-  {
-    "name": "anastest",
-    "commit_id": "12510787d3ec34f92ab1837f00dc07ab039b1c56",
-    "commit_message": "Initial commit",
-    "created_at": null,
-    "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/tree/anastest"
-  },
-  {
-    "name": "main",
-    "commit_id": "12510787d3ec34f92ab1837f00dc07ab039b1c56",
-    "commit_message": "Initial commit",
-    "created_at": null,
-    "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/tree/main"
-  },
-  {
-    "name": "main",
-    "commit_id": "06023606d26ba362a4e277a69ae50af8fd8f4913",
-    "commit_message": "requirement.txt\n",
-    "created_at": null,
-    "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/tree/main"
-  },
-  {
-    "name": "main",
-    "commit_id": "59366d85370e69235bed7cf64e4d844d334c4c02",
-    "commit_message": "Initial commit",
-    "created_at": null,
-    "web_url": "https://gitlab.com/anasakhssas1-group/gitlab1/-/tree/main"
-  },
-  {
-    "name": "main",
-    "commit_id": "8b75910a570067343b83e0a549ed1fcb6705cb03",
-    "commit_message": "Initial commit",
-    "created_at": null,
-    "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428/-/tree/main"
+    "web_url": "https://gitlab.com/anasakhssas1-group/test/-/tree/branche_1220_3107"
   }
 ]

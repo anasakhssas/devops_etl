@@ -1,25 +1,13 @@
 [
   {
-    "id": 402446445,
-    "title": "Add new file",
-    "state": "merged",
-    "created_at": "2025-07-25 13:42:29.012000",
-    "updated_at": "2025-07-25 13:42:37.962000",
-    "author": "Anas Akhssas",
-    "web_url": "https://gitlab.com/anasakhssas1-group/anas/-/merge_requests/1",
-    "source_branch": "branch1",
-    "target_branch": "main",
-    "merged_at": "2025-07-25 13:42:37.600000"
-  },
-  {
-    "id": 402446104,
-    "title": "Draft: Anastestgitlab",
+    "id": 403747963,
+    "title": "mergeR_1125_3107",
     "state": "closed",
-    "created_at": "2025-07-25 13:40:59.620000",
-    "updated_at": "2025-07-25 13:41:29.490000",
+    "created_at": "2025-07-31 10:26:02.316000",
+    "updated_at": "2025-07-31 10:26:37.801000",
     "author": "Anas Akhssas",
-    "web_url": "https://gitlab.com/anasakhssas1-group/test4/-/merge_requests/1",
-    "source_branch": "anastest",
+    "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl/-/merge_requests/4",
+    "source_branch": "branche_1125_3107",
     "target_branch": "main",
     "merged_at": null
   }
