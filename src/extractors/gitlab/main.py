@@ -1,9 +1,10 @@
 import os
-import json
+import sys
+# Ajout : inclure le dossier racine du projet dans sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 from dotenv import load_dotenv
 from datetime import datetime
 from dateutil.parser import parse as parse_date  # Ajout pour gestion robuste des dates
-
 from src.extractors.gitlab.gitlab_client_improved import GitLabClient
 from src.extractors.gitlab.projects_gateway import GitLabProjectsGateway
 from src.extractors.gitlab.users_gateway import GitLabUsersGateway  # Ajout pour users/groups
