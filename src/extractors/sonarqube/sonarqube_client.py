@@ -256,8 +256,24 @@ class SonarQubeClient:
                 raise APIAuthenticationError("SonarQube authentication failed. Check your credentials.")
             elif response.status_code == 403:
                 raise APIAuthenticationError("Insufficient permissions to access this resource.")
-            elif response.status_code == 404:
-                raise ResourceNotFoundError(f"Resource not found: {url}")
+            elif response.status_code in (400, 404):
+                # Extraire un message détaillé de l'API si disponible
+                detail = ""
+                try:
+                    body = response.json()
+                    if isinstance(body, dict):
+                        if "errors" in body and isinstance(body["errors"], list) and body["errors"]:
+                            detail = "; ".join(
+                                (e.get("msg") or e.get("message") or str(e)) for e in body["errors"]
+                            )
+                        else:
+                            detail = body.get("message") or str(body)
+                except Exception:
+                    detail = (response.text or "").strip()
+                if response.status_code == 404:
+                    raise ResourceNotFoundError(f"Resource not found: {url}. Details: {detail}")
+                else:
+                    raise ConnectionError(f"Bad request to SonarQube API: {detail}")
             elif response.status_code == 429:
                 raise APIRateLimitError("SonarQube API rate limit exceeded. Please try again later.")
             

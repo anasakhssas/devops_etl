@@ -1,16 +1,16 @@
 {
   "project_tested": {
-    "id": 72023033,
-    "name": "DevOps_project"
+    "id": 72458495,
+    "name": "test_1046_0806"
   },
   "get_projects": {
-    "count": 7
+    "count": 10
   },
   "get_project_members": {
     "count": 0
   },
   "get_project_commits": {
-    "count": 0
+    "count": 7
   },
   "get_project_merge_requests": {
     "count": 0
@@ -19,9 +19,9 @@
     "count": 0
   },
   "get_project_pipelines": {
-    "count": 0
+    "count": 3
   },
   "get_project_branches": {
-    "count": 0
+    "count": 1
   }
 }

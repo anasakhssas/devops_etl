@@ -314,3 +314,95 @@ class SonarQubeProjectsGateway:
         
         response = self.client.get(endpoint, params=params)
         return response
+
+    def get_project_branches(self, project_key: str) -> List[Dict[str, Any]]:
+        """
+        Récupérer la liste des branches analysées pour un projet.
+        """
+        endpoint = "project_branches/list"
+        params = {"project": project_key}
+        logger.info(f"Fetching branches for project {project_key}")
+        resp = self.client.get(endpoint, params=params)
+        return resp.get("branches", []) if isinstance(resp, dict) else resp
+
+    def get_project_pull_requests(self, project_key: str, status: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        Récupérer la liste des Pull Requests d'un projet (si SCM pris en charge).
+        """
+        endpoint = "project_pull_requests/list"
+        params = {"project": project_key}
+        if status:
+            params["status"] = status  # OPEN, MERGED, DECLINED selon versions
+        logger.info(f"Fetching pull requests for project {project_key} with params: {params}")
+        resp = self.client.get(endpoint, params=params)
+        return resp.get("pullRequests", []) if isinstance(resp, dict) else resp
+
+    def get_quality_gate_status(
+        self,
+        project_key: str,
+        branch: Optional[str] = None,
+        pull_request: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Récupérer le statut de Quality Gate du projet (éventuellement par branche/PR).
+        """
+        endpoint = "qualitygates/project_status"
+        params: Dict[str, Any] = {"projectKey": project_key}
+        if branch:
+            params["branch"] = branch
+        if pull_request:
+            params["pullRequest"] = pull_request
+        logger.info(f"Fetching quality gate status for project {project_key} with params: {params}")
+        return self.client.get(endpoint, params=params)
+
+    def get_compute_engine_activity(
+        self,
+        project_key: str,
+        branch: Optional[str] = None,
+        status: Optional[str] = None,  # PENDING, IN_PROGRESS, SUCCESS, FAILED, CANCELED
+        only_current: bool = False,
+    ) -> List[Dict[str, Any]]:
+        """
+        Récupérer l'activité du Compute Engine (tâches d'analyse) du projet.
+        """
+        endpoint = "ce/activity"
+        params: Dict[str, Any] = {"component": project_key}
+        if branch:
+            params["branch"] = branch
+        if status:
+            params["status"] = status
+        if only_current:
+            params["onlyCurrent"] = "true"
+        logger.info(f"Fetching CE activity for project {project_key} with params: {params}")
+        resp = self.client.get(endpoint, params=params)
+        return resp.get("tasks", []) if isinstance(resp, dict) else resp
+
+    def get_measures_component_tree(
+        self,
+        project_key: str,
+        metrics: List[str],
+        branch: Optional[str] = None,
+        qualifiers: Optional[List[str]] = None,  # e.g., ["FIL","UTS","DIR"]
+        strategy: str = "leaves",  # children, leaves, all
+        page_size: int = 500,
+    ) -> List[Dict[str, Any]]:
+        """
+        Récupérer les mesures pour l'arborescence des composants d'un projet.
+        Retourne une liste de composants avec leurs mesures.
+        """
+        endpoint = "measures/component_tree"
+        params: Dict[str, Any] = {
+            "component": project_key,
+            "metricKeys": ",".join(metrics),
+            "strategy": strategy,
+            "ps": page_size,
+        }
+        if branch:
+            params["branch"] = branch
+        if qualifiers:
+            params["qualifiers"] = ",".join(qualifiers)
+        logger.info(f"Fetching component tree measures for project {project_key} with params: {params}")
+        # Cet endpoint est paginé -> paginate=True pour tout récupérer
+        resp = self.client.get(endpoint, params=params, paginate=True)
+        # Quand paginé, le client renvoie directement la liste d'items (composants)
+        return resp if isinstance(resp, list) else resp.get("components", [])
