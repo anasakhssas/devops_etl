@@ -14,7 +14,7 @@
     "ancestors": []
   },
   "quality_measures": {
-    "error": "Project with key 'stagepfa_devops_project' not found"
+    "error": "SonarQubeProjectsGateway.get_project_quality_metrics() got an unexpected keyword argument 'metrics'"
   },
   "coverage_measures": {
     "component": {
@@ -59,8 +59,8 @@
   "component_tree_items": 1,
   "activity_history_metrics": [
     "code_smells",
-    "bugs",
     "vulnerabilities",
-    "coverage"
+    "coverage",
+    "bugs"
   ]
 }

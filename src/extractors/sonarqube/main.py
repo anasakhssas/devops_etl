@@ -67,7 +67,16 @@ def test_projects_gateway_methods(projects_gateway: SonarQubeProjectsGateway,
 
     # Mesures qualité/couverture
     try:
-        result["quality_measures"] = projects_gateway.get_project_quality_metrics(project_key, branch=branch)
+        # Remplacer 'maintainability_rating' par 'sqale_rating'
+        result["quality_measures"] = projects_gateway.get_project_quality_metrics(
+            project_key, branch=branch,
+            metrics=[
+                "bugs", "reliability_rating", "vulnerabilities", "security_rating",
+                "security_hotspots", "security_hotspots_reviewed", "code_smells",
+                "sqale_index", "sqale_debt_ratio", "sqale_rating",  # <-- ici
+                "duplicated_lines_density", "duplicated_blocks", "cognitive_complexity", "complexity"
+            ]
+        )
     except Exception as e:
         result["quality_measures"] = {"error": str(e)}
     try:
@@ -157,7 +166,16 @@ def fetch_all_projects_resources(projects_gateway: SonarQubeProjectsGateway,
 
         entry: Dict[str, Any] = {"project": comp}
         try:
-            entry["quality_measures"] = projects_gateway.get_project_quality_metrics(proj_key, branch=branch)
+            # Remplacer 'maintainability_rating' par 'sqale_rating'
+            entry["quality_measures"] = projects_gateway.get_project_quality_metrics(
+                proj_key, branch=branch,
+                metrics=[
+                    "bugs", "reliability_rating", "vulnerabilities", "security_rating",
+                    "security_hotspots", "security_hotspots_reviewed", "code_smells",
+                    "sqale_index", "sqale_debt_ratio", "sqale_rating",  # <-- ici
+                    "duplicated_lines_density", "duplicated_blocks", "cognitive_complexity", "complexity"
+                ]
+            )
         except Exception as e:
             entry["quality_measures"] = {"error": str(e)}
 
@@ -261,6 +279,7 @@ def main():
         include_quality_gate=True,
         include_activity=True,
         branch=branch,
+        # metrics=["bugs", ..., "sqale_rating", ...]  # si extract() accepte ce paramètre
     )
     save_json(full_extract, "sonarqube_full_extract.json")
 

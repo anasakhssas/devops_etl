@@ -155,7 +155,8 @@ class SonarQubeExtractor(BaseExtractor):
         quality_metrics = [
             "bugs","reliability_rating","vulnerabilities","security_rating","security_hotspots",
             "security_hotspots_reviewed","code_smells","sqale_index","sqale_debt_ratio",
-            "maintainability_rating","duplicated_lines_density","duplicated_blocks",
+            "sqale_rating",
+            "duplicated_lines_density","duplicated_blocks",
             "cognitive_complexity","complexity",
         ]
         coverage_metrics = [

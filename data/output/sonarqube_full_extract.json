@@ -1,5 +1,5 @@
-{
-  "stagepfa_devops_project": {
+[
+  {
     "project": {
       "organization": "stagepfa",
       "key": "stagepfa_devops_project",
@@ -8,10 +8,7 @@
       "visibility": "private",
       "lastAnalysisDate": "2025-08-06T11:10:37+0000"
     },
-    "quality_measures": {
-      "error": "SonarQubeProjectsGateway.get_project_quality_metrics() got an unexpected keyword argument 'metrics'"
-    },
-    "coverage_measures": {
+    "measures": {
       "component": {
         "id": "AZh5edrJxvHCKXqrjStG",
         "key": "stagepfa_devops_project",
@@ -19,13 +16,72 @@
         "qualifier": "TRK",
         "measures": [
           {
+            "metric": "complexity",
+            "value": "0"
+          },
+          {
+            "metric": "duplicated_lines_density",
+            "value": "0.0",
+            "bestValue": true
+          },
+          {
+            "metric": "security_hotspots_reviewed",
+            "value": "100.0",
+            "bestValue": true
+          },
+          {
+            "metric": "sqale_index",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "sqale_rating",
+            "value": "1.0",
+            "bestValue": true
+          },
+          {
+            "metric": "bugs",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "lines_to_cover",
+            "value": "1"
+          },
+          {
+            "metric": "line_coverage",
+            "value": "0.0",
+            "bestValue": false
+          },
+          {
             "metric": "coverage",
             "value": "0.0",
             "bestValue": false
           },
           {
-            "metric": "lines_to_cover",
-            "value": "1"
+            "metric": "reliability_rating",
+            "value": "1.0",
+            "bestValue": true
+          },
+          {
+            "metric": "code_smells",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "security_rating",
+            "value": "1.0",
+            "bestValue": true
+          },
+          {
+            "metric": "sqale_debt_ratio",
+            "value": "0.0",
+            "bestValue": true
+          },
+          {
+            "metric": "security_hotspots",
+            "value": "0",
+            "bestValue": true
           },
           {
             "metric": "uncovered_lines",
@@ -33,9 +89,19 @@
             "bestValue": false
           },
           {
-            "metric": "line_coverage",
-            "value": "0.0",
-            "bestValue": false
+            "metric": "cognitive_complexity",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "duplicated_blocks",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "vulnerabilities",
+            "value": "0",
+            "bestValue": true
           }
         ]
       }
@@ -81,7 +147,7 @@
       }
     ]
   },
-  "stagepfa_test_1046_0806": {
+  {
     "project": {
       "organization": "stagepfa",
       "key": "stagepfa_test_1046_0806",
@@ -91,10 +157,7 @@
       "lastAnalysisDate": "2025-08-06T13:13:28+0000",
       "revision": "3faffc01082bbe6d844f17d194f21e40fa8812fa"
     },
-    "quality_measures": {
-      "error": "SonarQubeProjectsGateway.get_project_quality_metrics() got an unexpected keyword argument 'metrics'"
-    },
-    "coverage_measures": {
+    "measures": {
       "component": {
         "id": "AZh_IOf8k1hDFObVqczb",
         "key": "stagepfa_test_1046_0806",
@@ -102,13 +165,72 @@
         "qualifier": "TRK",
         "measures": [
           {
+            "metric": "complexity",
+            "value": "0"
+          },
+          {
+            "metric": "duplicated_lines_density",
+            "value": "0.0",
+            "bestValue": true
+          },
+          {
+            "metric": "security_hotspots_reviewed",
+            "value": "0.0",
+            "bestValue": false
+          },
+          {
+            "metric": "sqale_index",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "sqale_rating",
+            "value": "1.0",
+            "bestValue": true
+          },
+          {
+            "metric": "bugs",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "lines_to_cover",
+            "value": "4"
+          },
+          {
+            "metric": "line_coverage",
+            "value": "0.0",
+            "bestValue": false
+          },
+          {
             "metric": "coverage",
             "value": "0.0",
             "bestValue": false
           },
           {
-            "metric": "lines_to_cover",
-            "value": "4"
+            "metric": "reliability_rating",
+            "value": "1.0",
+            "bestValue": true
+          },
+          {
+            "metric": "code_smells",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "security_rating",
+            "value": "1.0",
+            "bestValue": true
+          },
+          {
+            "metric": "sqale_debt_ratio",
+            "value": "0.0",
+            "bestValue": true
+          },
+          {
+            "metric": "security_hotspots",
+            "value": "1",
+            "bestValue": false
           },
           {
             "metric": "uncovered_lines",
@@ -116,9 +238,19 @@
             "bestValue": false
           },
           {
-            "metric": "line_coverage",
-            "value": "0.0",
-            "bestValue": false
+            "metric": "cognitive_complexity",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "duplicated_blocks",
+            "value": "0",
+            "bestValue": true
+          },
+          {
+            "metric": "vulnerabilities",
+            "value": "0",
+            "bestValue": true
           }
         ]
       }
@@ -255,4 +387,4 @@
       }
     ]
   }
-}
+]
