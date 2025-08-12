@@ -8,10 +8,34 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from src.loaders.database.db_connection import get_db_connection  # adapte le chemin si besoin
 
-def load_events(json_path="data/transformers/events_transformed.json"):
-    """Charge et insère les événements depuis un fichier JSON vers la base de données."""
+def _parse_datetime(value):
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        # Accepte "Z", "T" ou espace
+        candidate = value.replace("Z", "+00:00")
+        try:
+            return datetime.fromisoformat(candidate)
+        except Exception:
+            # Essais format GitLab classiques
+            for fmt in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"):
+                try:
+                    return datetime.strptime(value, fmt)
+                except ValueError:
+                    pass
+    return None
+
+def load_events(json_path="data/transformers/events_transformed.json", check_overflow=False):
+    """
+    Charge et insère les événements depuis un fichier JSON vers la base de données.
+    Si check_overflow=False, tente d'insérer même les grands IDs (risque d'erreur).
+    """
     if not os.path.isabs(json_path):
         json_path = os.path.join(PROJECT_ROOT, json_path)
+
+    print(f"[ℹ️] Lecture du fichier: {json_path}")
     if not os.path.exists(json_path):
         print(f"[❌] Fichier introuvable : {json_path}")
         return
@@ -19,6 +43,7 @@ def load_events(json_path="data/transformers/events_transformed.json"):
     with open(json_path, "r", encoding="utf-8") as f:
         events = json.load(f)
 
+    print(f"[ℹ️] Événements lus: {len(events) if isinstance(events, list) else 'inconnu'}")
     if not events:
         print("[ℹ️] Aucun événement à insérer.")
         return
@@ -27,6 +52,14 @@ def load_events(json_path="data/transformers/events_transformed.json"):
         conn = None
         cursor = None
         conn = get_db_connection()
+
+        # Évite qu'une erreur sur une ligne n'aborte toutes les suivantes
+        try:
+            conn.autocommit = True
+            print("[ℹ️] Autocommit activé pour des insertions résilientes.")
+        except Exception:
+            print("[ℹ️] Autocommit non disponible, utilisation du commit final.")
+
         cursor = conn.cursor()
 
         insert_query = """
@@ -43,19 +76,46 @@ def load_events(json_path="data/transformers/events_transformed.json"):
         ON CONFLICT (id) DO NOTHING;
         """
 
+        MAX_INT32 = 2_147_483_647
         success_count = 0
+        skipped_overflow = 0
+
         for event in events:
+            if not isinstance(event, dict):
+                print(f"[⚠️] Événement ignoré (type invalide): {type(event)}")
+                continue
+
             if not all(k in event for k in ("id", "created_at", "action_name")):
                 print(f"[⚠️] Événement ignoré : clé(s) manquante(s) dans {event}")
                 continue
 
             try:
+                # Vérifie les dépassements INT4 sur les colonnes d'identifiants
+                overflow_fields = []
+                if check_overflow:  # Ajouter ce test pour pouvoir désactiver la vérification
+                    for k in ("id", "target_id", "project_id", "author_id"):
+                        v = event.get(k)
+                        if v is None:
+                            continue
+                        try:
+                            iv = int(v)
+                            if iv > MAX_INT32:
+                                overflow_fields.append(f"{k}={iv}")
+                        except Exception:
+                            # Si non convertible en int, on laisse la base rejeter si elle ne peut pas caster
+                            pass
+
+                if overflow_fields:
+                    print(f"[⚠️] Ligne ignorée: valeurs > INT (probable besoin BIGINT) -> {', '.join(overflow_fields)}")
+                    skipped_overflow += 1
+                    continue
+
                 event_data = {
-                    "id": event["id"],
+                    "id": event.get("id"),
                     "action_name": event.get("action_name"),
                     "target_type": event.get("target_type"),
                     "author_username": event.get("author_username"),
-                    "created_at": datetime.fromisoformat(event["created_at"]) if event.get("created_at") else None,
+                    "created_at": _parse_datetime(event.get("created_at")),
                     "target_title": event.get("target_title"),
                     "target_id": event.get("target_id"),
                     "project_id": event.get("project_id"),
@@ -68,8 +128,12 @@ def load_events(json_path="data/transformers/events_transformed.json"):
             except Exception as e:
                 print(f"[⚠️] Erreur lors de l'insertion de l'événement ID={event.get('id')} : {str(e)}")
 
-        conn.commit()
-        print(f"[✅] {success_count}/{len(events)} événements insérés avec succès.")
+        # Commit seulement si autocommit non activé
+        if not getattr(conn, "autocommit", False):
+            conn.commit()
+
+        total = len(events) if isinstance(events, list) else 0
+        print(f"[✅] {success_count}/{total} événements insérés avec succès. Ignorés (overflow): {skipped_overflow}")
 
     except Exception as e:
         print(f"[❌] Erreur lors de la connexion ou l'insertion : {str(e)}")
@@ -79,4 +143,8 @@ def load_events(json_path="data/transformers/events_transformed.json"):
             cursor.close()
         if conn:
             conn.close()
+
+if __name__ == "__main__":
+    # Pour désactiver temporairement la vérification des dépassements:
+    load_events(check_overflow=False)
 

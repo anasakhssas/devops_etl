@@ -9,16 +9,27 @@ class EventsTransformer:
     """
 
     def transform(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        def parse_date(date_str):
+        def parse_date_str_iso(date_str: Any) -> Any:
+            # Retourne une chaîne ISO si possible, sinon la valeur d'origine (ou None).
             if not date_str:
                 return None
-            try:
-                return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-            except ValueError:
+            if isinstance(date_str, datetime):
+                return date_str.isoformat()
+            if isinstance(date_str, str):
+                # Essais de parsing pour formats courants GitLab
+                for fmt in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"):
+                    try:
+                        dt = datetime.strptime(date_str, fmt)
+                        return dt.isoformat()
+                    except ValueError:
+                        pass
+                # Dernière tentative: fromisoformat (gère "YYYY-MM-DD HH:MM:SS" et "YYYY-MM-DDTHH:MM:SS[.ffffff][+/-offset]")
                 try:
-                    return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
-                except ValueError:
-                    return None
+                    dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+                    return dt.isoformat()
+                except Exception:
+                    return date_str
+            return date_str
 
         transformed = []
         for event in data:
@@ -27,7 +38,7 @@ class EventsTransformer:
                 "action_name": event.get("action_name"),
                 "target_type": event.get("target_type"),
                 "author_username": event.get("author", {}).get("username") or event.get("author_username"),
-                "created_at": parse_date(event.get("created_at")),
+                "created_at": parse_date_str_iso(event.get("created_at")),
                 "target_title": event.get("target_title"),
                 "target_id": event.get("target_id"),
                 "project_id": event.get("project_id"),
@@ -36,26 +47,42 @@ class EventsTransformer:
             transformed.append(transformed_event)
         return transformed
 
-if __name__ == "__main__":
-    # Local test
+def run(input_json_path: str = None, output_json_path: str = None) -> None:
+    # Détermine les chemins par défaut relativement au repo
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/projects_events_full.json"))
-    output_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/transformers/events_transformed.json"))
+    default_input = os.path.abspath(os.path.join(base_dir, "../../../data/output/projects_events_incremental.json"))
+    default_output = os.path.abspath(os.path.join(base_dir, "../../../data/transformers/events_transformed.json"))
+    input_path = input_json_path or default_input
+    output_path = output_json_path or default_output
 
-    if not os.path.exists(input_json_path):
-        print(f"[ERREUR] Fichier introuvable : {input_json_path}")
-        exit(1)
+    if not os.path.exists(input_path):
+        print(f"[ERREUR] Fichier introuvable : {input_path}")
+        return
 
-    with open(input_json_path, "r", encoding="utf-8") as f:
+    with open(input_path, "r", encoding="utf-8") as f:
         projects_events = json.load(f)
 
-    # Fusionner tous les événements de tous les projets dans une seule liste
+    # Aplatit la structure quelle que soit la forme (dict par projet ou liste directe)
     all_events = []
-    for events_list in projects_events.values():
-        all_events.extend(events_list)
+    if isinstance(projects_events, dict):
+        for v in projects_events.values():
+            if isinstance(v, list):
+                all_events.extend(v)
+            elif isinstance(v, dict) and isinstance(v.get("events"), list):
+                all_events.extend(v["events"])
+    elif isinstance(projects_events, list):
+        all_events = projects_events
+
+    print(f"[ℹ️] Événements en entrée: {len(all_events)}")
 
     transformer = EventsTransformer()
     transformed = transformer.transform(all_events)
 
-    with open(output_json_path, "w", encoding="utf-8") as f:
-        json.dump(transformed, f, default=str, ensure_ascii=False, indent=2)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(transformed, f, ensure_ascii=False, indent=2)
+
+    print(f"[✅] Fichier transformé écrit: {output_path} ({len(transformed)} événements)")
+
+if __name__ == "__main__":
+    run()

@@ -84,4 +84,8 @@ class GitLabProjectsGateway:
         """
         Récupère les événements d'un projet.
         """
-        return self.client.get_project_events(project_id, params or {})
+        parameters = params.copy() if params else {}
+        # Maximiser le nombre d'items par page si la pagination n'est pas gérée en amont
+        if "per_page" not in parameters:
+            parameters["per_page"] = 100
+        return self.client.get_project_events(project_id, parameters or {})
