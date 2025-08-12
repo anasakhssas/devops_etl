@@ -1,45 +1,5 @@
 {
-  "72458495": [
-    {
-      "project_id": 72458495,
-      "id": 1969675264,
-      "iid": 3,
-      "sha": "3faffc01082bbe6d844f17d194f21e40fa8812fa",
-      "ref": "main",
-      "status": "success",
-      "source": "push",
-      "created_at": "2025-08-06T10:30:02.062Z",
-      "updated_at": "2025-08-06T10:31:04.397Z",
-      "web_url": "https://gitlab.com/stagepfa/test_1046_0806/-/pipelines/1969675264",
-      "name": null
-    },
-    {
-      "project_id": 72458495,
-      "id": 1969669621,
-      "iid": 2,
-      "sha": "65d0d93042389918e29508ea4c4bc280c235bee3",
-      "ref": "main",
-      "status": "success",
-      "source": "push",
-      "created_at": "2025-08-06T10:26:25.533Z",
-      "updated_at": "2025-08-06T10:27:31.188Z",
-      "web_url": "https://gitlab.com/stagepfa/test_1046_0806/-/pipelines/1969669621",
-      "name": null
-    },
-    {
-      "project_id": 72458495,
-      "id": 1969660992,
-      "iid": 1,
-      "sha": "7e9a9410ad8abcc9308c39026fb70746a22e74ba",
-      "ref": "main",
-      "status": "success",
-      "source": "push",
-      "created_at": "2025-08-06T10:21:39.703Z",
-      "updated_at": "2025-08-06T10:22:51.736Z",
-      "web_url": "https://gitlab.com/stagepfa/test_1046_0806/-/pipelines/1969660992",
-      "name": null
-    }
-  ],
+  "72458495": [],
   "72391249": [],
   "72390081": [],
   "72023033": [],
@@ -47,6 +7,5 @@
   "71906513": [],
   "71866675": [],
   "71825485": [],
-  "71824847": [],
-  "71824428": []
+  "71824847": []
 }

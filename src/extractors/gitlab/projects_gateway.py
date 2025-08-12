@@ -17,18 +17,13 @@ class GitLabProjectsGateway:
     def get_projects(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Récupère la liste des projets selon les critères fournis.
+        Exclut les projets archivés par défaut (archived=false).
+        Pour inclure les projets archivés, passer params={"archived": True} ou "true".
         """
-        return self.client.extract_gitlab_resource(
-            resource_type="projects",
-            additional_parameters=params
-        )
-
-    def get_projects(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        """
-        Récupère la liste des projets selon les critères fournis.
-        """
-        # Convertit None en dict vide pour la cohérence
-        request_params = params if params is not None else {}
+        request_params = params.copy() if params else {}
+        if "archived" not in request_params:
+            # Utilise la valeur "false" pour maximiser la compatibilité avec l'API GitLab
+            request_params["archived"] = "false"
         return self.client.extract_gitlab_resource(
             resource_type="projects",
             additional_parameters=request_params

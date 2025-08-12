@@ -884,35 +884,5 @@
       "default": true,
       "web_url": "https://gitlab.com/anasakhssas1-group/gitlab1/-/tree/main"
     }
-  ],
-  "devops_etl-deleted-71824428": [
-    {
-      "project_id": "71824428",
-      "name": "main",
-      "commit": {
-        "id": "8b75910a570067343b83e0a549ed1fcb6705cb03",
-        "short_id": "8b75910a",
-        "created_at": "2025-07-22T08:38:14.000+00:00",
-        "parent_ids": [],
-        "title": "Initial commit",
-        "message": "Initial commit",
-        "author_name": "Anas Akhssas",
-        "author_email": "anasakhssas1@gmail.com",
-        "authored_date": "2025-07-22T08:38:14.000+00:00",
-        "committer_name": "Anas Akhssas",
-        "committer_email": "anasakhssas1@gmail.com",
-        "committed_date": "2025-07-22T08:38:14.000+00:00",
-        "trailers": {},
-        "extended_trailers": {},
-        "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428/-/commit/8b75910a570067343b83e0a549ed1fcb6705cb03"
-      },
-      "merged": false,
-      "protected": true,
-      "developers_can_push": false,
-      "developers_can_merge": false,
-      "can_push": true,
-      "default": true,
-      "web_url": "https://gitlab.com/anasakhssas1-group/devops_etl-deleted-71824428/-/tree/main"
-    }
   ]
 }
