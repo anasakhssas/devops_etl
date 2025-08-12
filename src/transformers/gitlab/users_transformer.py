@@ -7,11 +7,13 @@ class UsersTransformer:
     def transform(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         transformed = []
         for user in data:
+            # Fallback sur public_email si email n'est pas fourni (non-admin ou email privé)
+            raw_email = user.get("email") or user.get("public_email")
             transformed_user = {
                 "id": user.get("id"),
                 "username": user.get("username"),
                 "name": user.get("name"),
-                "email": user.get("email") if user.get("email") not in (None, '', 'null') else None,
+                "email": raw_email if raw_email not in (None, '', 'null') else None,
                 "is_admin": user.get("is_admin", False),
                 "state": user.get("state"),
                 "web_url": user.get("web_url"),
@@ -45,8 +47,6 @@ if __name__ == "__main__":
         json.dump(transformed_users, f, default=str, ensure_ascii=False, indent=2)
 
     print(f"[✅] Données transformées enregistrées dans : {output_json_path}")
-    exit(1)
-
     with open(input_json_path, "r", encoding="utf-8") as f:
         raw_users = json.load(f)
 

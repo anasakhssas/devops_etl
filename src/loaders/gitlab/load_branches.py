@@ -2,12 +2,16 @@ import os
 import json
 import sys
 from datetime import datetime
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+# Assure l'import 'src.*' en ajoutant la racine du projet
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from src.loaders.database.db_connection import get_db_connection  # adapte si nécessaire
 
 def load_branches(json_path="data/transformers/branches_transformed.json"):
     """Charge et insère les branches depuis un fichier JSON vers la base de données."""
-
+    if not os.path.isabs(json_path):
+        json_path = os.path.join(PROJECT_ROOT, json_path)
     if not os.path.exists(json_path):
         print(f"[❌] Fichier introuvable : {json_path}")
         return
@@ -20,6 +24,8 @@ def load_branches(json_path="data/transformers/branches_transformed.json"):
         return
 
     try:
+        conn = None
+        cursor = None
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -69,5 +75,5 @@ def load_branches(json_path="data/transformers/branches_transformed.json"):
 # Optionnel : test local
 if __name__ == "__main__":
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(base_dir, "../../data/transformers/branches_transformed.json")
+    json_path = os.path.join(PROJECT_ROOT, "data", "transformers", "branches_transformed.json")
     load_branches(json_path)

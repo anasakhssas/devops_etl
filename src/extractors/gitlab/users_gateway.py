@@ -39,6 +39,7 @@ class GitLabUsersGateway:
     def get_all_users(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Récupère tous les utilisateurs internes de l'instance GitLab (pagination gérée).
+        Note: l'attribut 'email' n'est renvoyé par GitLab que pour un admin et avec 'with_email=true'.
 
         Args:
             params: Paramètres de filtrage optionnels.
@@ -52,6 +53,8 @@ class GitLabUsersGateway:
             params = params.copy() if params else {}
             params["external"] = False
             params["per_page"] = 100
+            if "with_email" not in params:
+                params["with_email"] = True  # booléen
             endpoint = "/users"
             all_users = []
             page = 1
@@ -60,6 +63,14 @@ class GitLabUsersGateway:
                 response = self.client._gitlab_client.http_get(endpoint, params=params)
                 if not response or not isinstance(response, list):
                     break
+
+                # Enrichissement: compléter les emails manquants
+                for u in response:
+                    if not (u.get("email") or u.get("public_email")):
+                        resolved = self._fetch_user_email(u.get("id"))
+                        if resolved:
+                            u["email"] = resolved
+
                 all_users.extend(response)
                 if len(response) < params["per_page"]:
                     break
@@ -100,3 +111,35 @@ class GitLabUsersGateway:
         except Exception as e:
             self.client._logger.error(f"Erreur lors de la récupération des groupes: {e}")
             return []
+
+    def _fetch_user_email(self, user_id: Optional[int]) -> Optional[str]:
+        """
+        Tente de récupérer l'email d'un utilisateur via des endpoints admins.
+        Ordre:
+          1) GET /users/:id?with_email=true
+          2) GET /users/:id/emails (prend 'primary' si disponible, sinon le premier)
+        """
+        if not user_id:
+            return None
+        try:
+            # 1) Détail utilisateur avec 'with_email=true'
+            detail = self.client._gitlab_client.http_get(f"/users/{user_id}", params={"with_email": True})
+            if isinstance(detail, dict):
+                if detail.get("email"):
+                    return detail["email"]
+                # parfois 'public_email' peut suffire
+                if detail.get("public_email"):
+                    return detail["public_email"]
+        except Exception as e:
+            self.client._logger.debug(f"Impossible de récupérer /users/{user_id} (with_email): {e}")
+
+        try:
+            # 2) Liste des emails de l'utilisateur
+            emails = self.client._gitlab_client.http_get(f"/users/{user_id}/emails", params={"per_page": 100})
+            if isinstance(emails, list) and emails:
+                primary = next((em for em in emails if em.get("primary")), None)
+                return (primary or emails[0]).get("email")
+        except Exception as e:
+            self.client._logger.debug(f"Impossible de récupérer /users/{user_id}/emails: {e}")
+
+        return None

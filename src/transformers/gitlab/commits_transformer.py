@@ -12,7 +12,7 @@ class CommitsTransformer:
             # L'API GitLab utilise 'authored_date' ou 'committed_date' pour les commits.
             # 'created_at' est souvent utilisé pour d'autres objets comme les projets ou les issues.
             created_at_str = commit.get("authored_date") or commit.get("committed_date")
-            
+            stats = commit.get("stats") or {}
             transformed_commit = {
                 "id": commit.get("id"),
                 "short_id": commit.get("short_id"),
@@ -21,7 +21,9 @@ class CommitsTransformer:
                 "author_email": commit.get("author_email"),
                 "created_at": created_at_str, # Garde la date en format ISO string
                 "message": commit.get("message"),
-                "web_url": commit.get("web_url")
+                "web_url": commit.get("web_url"),
+                "lines_added": stats.get("additions"),
+                "lines_deleted": stats.get("deletions"),
             }
             transformed.append(transformed_commit)
         return transformed

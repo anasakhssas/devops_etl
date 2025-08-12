@@ -3,11 +3,20 @@
 import json
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+# Assure l'import 'src.*' en ajoutant la racine du projet
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from src.loaders.database.db_connection import get_db_connection
 
 
 def load_users(json_path="data/transformers/users_transformed.json"):
+    # Normalise le chemin du JSON depuis la racine du projet si relatif
+    if not os.path.isabs(json_path):
+        json_path = os.path.join(PROJECT_ROOT, json_path)
+
     if not os.path.exists(json_path):
         print(f"[❌] Fichier introuvable : {json_path}")
         return
@@ -20,6 +29,8 @@ def load_users(json_path="data/transformers/users_transformed.json"):
         return
 
     try:
+        conn = None
+        cursor = None
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -35,7 +46,7 @@ def load_users(json_path="data/transformers/users_transformed.json"):
         ON CONFLICT (id) DO UPDATE SET
             name = EXCLUDED.name,
             username = EXCLUDED.username,
-            email = EXCLUDED.email,
+            email = COALESCE(EXCLUDED.email, users.email),
             is_admin = EXCLUDED.is_admin,
             state = EXCLUDED.state,
             created_at = EXCLUDED.created_at,
@@ -59,6 +70,6 @@ def load_users(json_path="data/transformers/users_transformed.json"):
 
 # Optionnel : test local
 if __name__ == "__main__":
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(base_dir, "../../data/transformers/users_transformed.json")
+    # Utilise le chemin absolu depuis la racine du projet
+    json_path = os.path.join(PROJECT_ROOT, "data", "transformers", "users_transformed.json")
     load_users(json_path)

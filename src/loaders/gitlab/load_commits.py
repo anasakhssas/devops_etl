@@ -1,15 +1,17 @@
 import os
 import sys
-# Ajoute le répertoire racine du projet au sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
 import json
 from datetime import datetime
+# Ajoute la racine du projet au sys.path pour importer 'src.*'
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from src.loaders.database.db_connection import get_db_connection  # Chemin à adapter si besoin
 
 def load_commits(json_path="data/transformers/commits_transformed.json"):
     """Charge et insère les commits depuis un fichier JSON vers la base de données."""
-
+    if not os.path.isabs(json_path):
+        json_path = os.path.join(PROJECT_ROOT, json_path)
     if not os.path.exists(json_path):
         print(f"[❌] Fichier introuvable : {json_path}")
         return
@@ -22,17 +24,19 @@ def load_commits(json_path="data/transformers/commits_transformed.json"):
         return
 
     try:
+        conn = None
+        cursor = None
         conn = get_db_connection()
         cursor = conn.cursor()
 
         insert_query = """
         INSERT INTO commits (
             id, short_id, title, author_name, author_email,
-            created_at, message, web_url
+            created_at, message, web_url, lines_added, lines_deleted
         )
         VALUES (
             %(id)s, %(short_id)s, %(title)s, %(author_name)s, %(author_email)s,
-            %(created_at)s, %(message)s, %(web_url)s
+            %(created_at)s, %(message)s, %(web_url)s, %(lines_added)s, %(lines_deleted)s
         )
         ON CONFLICT (id) DO NOTHING;
         """
@@ -52,7 +56,9 @@ def load_commits(json_path="data/transformers/commits_transformed.json"):
                     "author_email": commit.get("author_email"),
                     "created_at": datetime.fromisoformat(commit["created_at"].replace("Z", "+00:00")) if commit.get("created_at") else None,
                     "message": commit.get("message"),
-                    "web_url": commit.get("web_url")
+                    "web_url": commit.get("web_url"),
+                    "lines_added": commit.get("lines_added"),
+                    "lines_deleted": commit.get("lines_deleted"),
                 }
 
                 cursor.execute(insert_query, commit_data)
@@ -75,6 +81,5 @@ def load_commits(json_path="data/transformers/commits_transformed.json"):
 
 # Optionnel : test local
 if __name__ == "__main__":
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(base_dir, "../../data/transformers/commits_transformed.json")
+    json_path = os.path.join(PROJECT_ROOT, "data", "transformers", "commits_transformed.json")
     load_commits(json_path)
