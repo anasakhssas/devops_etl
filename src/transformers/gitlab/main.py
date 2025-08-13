@@ -1,15 +1,26 @@
 import os
+import sys
+import subprocess
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def run_script(script_name):
-    script_path = os.path.join(os.path.dirname(__file__), script_name)
-    print(f"\n[INFO] Exécution de {script_name} ...")
-    exit_code = os.system(f'python "{script_path}"')
-    if exit_code != 0:
-        print(f"[ERREUR] {script_name} a échoué avec le code {exit_code}")
-    else:
-        print(f"[OK] {script_name} terminé.")
+    """Exécute un script Python dans le même dossier."""
+    script_path = os.path.join(BASE_DIR, script_name)
+    print("\n" + "=" * 50)
+    print(f"[INFO] Exécution de {script_name} ...")
+    print("=" * 50)
 
-if __name__ == "__main__":
+    try:
+        subprocess.run([sys.executable, script_path], check=True)
+        print(f"[✅ OK] {script_name} terminé.")
+    except subprocess.CalledProcessError as e:
+        print(f"[❌ ERREUR] {script_name} a échoué. Code: {e.returncode}")
+    except FileNotFoundError:
+        print(f"[⚠️] Fichier introuvable : {script_name}")
+
+def main():
+    """Lance tous les scripts de transformation."""
     scripts = [
         "users_transformer.py",
         "groups_transformer.py",
@@ -21,6 +32,11 @@ if __name__ == "__main__":
         "pipelines_transformer.py",
         "events_transformer.py"
     ]
+
     for script in scripts:
         run_script(script)
-    print("\n[✅] Tous les transformers ont été exécutés.")
+
+    print("\n[🎯] Tous les transformers ont été exécutés.")
+
+if __name__ == "__main__":
+    main()
