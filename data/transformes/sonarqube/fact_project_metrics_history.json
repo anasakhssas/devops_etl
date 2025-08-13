@@ -1,0 +1,58 @@
+[
+  {
+    "project_key": "stagepfa_devops_project",
+    "date_id": 20250806,
+    "branch_name": "main",
+    "n_bugs": "0",
+    "n_vulnerabilities": "0",
+    "n_code_smells": "0",
+    "n_hotspots": "0",
+    "n_duplicated_lines": "0.0",
+    "coverage": "0.0",
+    "complexity": "0",
+    "n_lines_of_code": "1",
+    "extraction_date": 20250813
+  },
+  {
+    "project_key": "stagepfa_test_1046_0806",
+    "date_id": 20250806,
+    "branch_name": "main",
+    "n_bugs": "0",
+    "n_vulnerabilities": "0",
+    "n_code_smells": "0",
+    "n_hotspots": "1",
+    "n_duplicated_lines": "0.0",
+    "coverage": "0.0",
+    "complexity": "0",
+    "n_lines_of_code": "4",
+    "extraction_date": 20250813
+  },
+  {
+    "project_key": "stagepfa_devops_project",
+    "date_id": 20250806,
+    "branch_name": "main",
+    "n_bugs": "0",
+    "n_vulnerabilities": "0",
+    "n_code_smells": "0",
+    "n_hotspots": "0",
+    "n_duplicated_lines": "0.0",
+    "coverage": "0.0",
+    "complexity": "0",
+    "n_lines_of_code": "1",
+    "extraction_date": 20250813
+  },
+  {
+    "project_key": "stagepfa_test_1046_0806",
+    "date_id": 20250806,
+    "branch_name": "main",
+    "n_bugs": "0",
+    "n_vulnerabilities": "0",
+    "n_code_smells": "0",
+    "n_hotspots": "1",
+    "n_duplicated_lines": "0.0",
+    "coverage": "0.0",
+    "complexity": "0",
+    "n_lines_of_code": "4",
+    "extraction_date": 20250813
+  }
+]

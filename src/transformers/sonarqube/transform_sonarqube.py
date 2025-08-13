@@ -28,12 +28,20 @@ def flatten_projects(raw_data):
 def transform_projects(raw_data):
     projects = []
     for item in flatten_projects(raw_data):
+        # Recherche la langue dans les structures connues
+        language = None
+        if "component" in item and isinstance(item["component"], dict):
+            language = item["component"].get("language")
+        elif "project_details" in item and "component" in item["project_details"]:
+            language = item["project_details"]["component"].get("language")
+        elif "project" in item and isinstance(item["project"], dict):
+            language = item["project"].get("language")
         projects.append({
             "project_key": item.get("key"),
             "project_name": item.get("name"),
-            "language": item.get("language"),
+            "language": language,
             "visibility": item.get("visibility"),
-            "created_at": item.get("creationDate")
+            "created_at": item.get("creationDate") or item.get("lastAnalysisDate")
         })
     return projects
 
@@ -63,10 +71,13 @@ def extract_metric(measures, metric_name):
             return m.get("value")
     return None
 
+def get_today_date_id():
+    return int(datetime.now().strftime("%Y%m%d"))
+
 def transform_metrics(raw_data):
+    extraction_date_id = get_today_date_id()
     metrics = []
     for item in flatten_metrics(raw_data):
-        # Vérifie la structure attendue
         if isinstance(item, dict) and "project" in item and "measures" in item:
             project = item["project"]
             measures_list = item["measures"]["component"]["measures"]
@@ -88,9 +99,9 @@ def transform_metrics(raw_data):
                 "n_duplicated_lines": extract_metric(measures_list, "duplicated_lines_density"),
                 "coverage": extract_metric(measures_list, "coverage"),
                 "complexity": extract_metric(measures_list, "complexity"),
-                "n_lines_of_code": extract_metric(measures_list, "lines_to_cover")
+                "n_lines_of_code": extract_metric(measures_list, "lines_to_cover"),
+                "extraction_date": extraction_date_id
             })
-        # ...sinon, ignore ou ajoute une gestion spécifique si besoin...
     return metrics
 
 def flatten_issues(raw_data):
@@ -125,10 +136,24 @@ def write_json(data, filename):
     with open(os.path.join(OUTPUT_DIR, filename), "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
+def append_json_history(data, filename):
+    path = os.path.join(OUTPUT_DIR, filename)
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            history = json.load(f)
+    else:
+        history = []
+    history.extend(data)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+
 def main():
     raw_data = load_json_files(INPUT_DIR)
     write_json(transform_projects(raw_data), "dim_project.json")
-    write_json(transform_metrics(raw_data), "fact_project_metrics.json")
+    today_str = datetime.now().strftime("%Y%m%d")
+    metrics_today = transform_metrics(raw_data)
+    write_json(metrics_today, f"fact_project_metrics_{today_str}.json")
+    append_json_history(metrics_today, "fact_project_metrics_history.json")
     write_json(transform_issues(raw_data), "fact_issues.json")
     # Ajoutez d'autres transformations ici selon vos besoins
 
