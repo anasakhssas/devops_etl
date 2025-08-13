@@ -2,6 +2,11 @@ from typing import List, Dict, Any
 from datetime import datetime
 import os
 import json
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class EventsTransformer:
     """
@@ -32,11 +37,24 @@ class EventsTransformer:
             return date_str
 
         transformed = []
+        missing_target_type_count = 0
+        
         for event in data:
+            # Check if target_type is missing
+            if event.get("target_type") is None:
+                missing_target_type_count += 1
+                # Log details about the event to help with debugging
+                logger.warning(f"Event ID {event.get('id')} missing target_type. Action: {event.get('action_name')}")
+                
+                # Try to infer target_type from action_name or other fields
+                inferred_type = self._infer_target_type(event)
+                if inferred_type:
+                    logger.info(f"Inferred target_type '{inferred_type}' for event ID {event.get('id')}")
+            
             transformed_event = {
                 "id": event.get("id"),
                 "action_name": event.get("action_name"),
-                "target_type": event.get("target_type"),
+                "target_type": event.get("target_type") or self._infer_target_type(event) or "unknown",
                 "author_username": event.get("author", {}).get("username") or event.get("author_username"),
                 "created_at": parse_date_str_iso(event.get("created_at")),
                 "target_title": event.get("target_title"),
@@ -45,7 +63,35 @@ class EventsTransformer:
                 "author_id": event.get("author_id")
             }
             transformed.append(transformed_event)
+            
+        if missing_target_type_count > 0:
+            logger.warning(f"Found {missing_target_type_count} events with missing target_type out of {len(data)} total events")
+            
         return transformed
+    
+    def _infer_target_type(self, event: Dict[str, Any]) -> str:
+        """
+        Try to infer the target_type based on action_name or other fields.
+        Returns inferred type or None if can't be determined.
+        """
+        action = event.get("action_name", "").lower()
+        
+        # Common mapping patterns based on GitLab event types
+        if "issue" in action:
+            return "Issue"
+        elif "merge" in action:
+            return "MergeRequest"
+        elif "commit" in action:
+            return "Commit"
+        elif "pipeline" in action:
+            return "Pipeline"
+        elif "project" in action:
+            return "Project"
+        elif "note" in action or "comment" in action:
+            return "Note"
+        
+        # If we can't infer, return None
+        return None
 
 def run(input_json_path: str = None, output_json_path: str = None) -> None:
     # Détermine les chemins par défaut relativement au repo

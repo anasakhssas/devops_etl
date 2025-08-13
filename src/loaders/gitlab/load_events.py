@@ -1,12 +1,17 @@
 import os
 import json
 import sys
+import logging
 from datetime import datetime
 # Assure l'import 'src.*' en ajoutant la racine du projet
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from src.loaders.database.db_connection import get_db_connection  # adapte le chemin si besoin
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def _parse_datetime(value):
     if value is None:
@@ -47,6 +52,15 @@ def load_events(json_path="data/transformers/events_transformed.json", check_ove
     if not events:
         print("[ℹ️] Aucun événement à insérer.")
         return
+
+    # Compte les événements sans target_type
+    missing_target_type_count = 0
+    for event in events:
+        if isinstance(event, dict) and event.get("target_type") is None:
+            missing_target_type_count += 1
+    
+    if missing_target_type_count > 0:
+        logger.warning(f"Found {missing_target_type_count} events with missing target_type out of {len(events)} total events")
 
     try:
         conn = None
@@ -122,6 +136,10 @@ def load_events(json_path="data/transformers/events_transformed.json", check_ove
                     "author_id": event.get("author_id"),
                 }
 
+                # Log when inserting an event with null target_type
+                if event_data["target_type"] is None:
+                    logger.warning(f"Inserting event ID={event_data['id']} with NULL target_type")
+                
                 cursor.execute(insert_query, event_data)
                 success_count += 1
 
