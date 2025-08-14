@@ -64,7 +64,17 @@ def transform_projects(data):
     """Transforme les données brutes en dimensions projets."""
     projects = []
     for item in data:
-        if "project" in item:
+        # Si la clé 'projects' existe et est une liste
+        if "projects" in item and isinstance(item["projects"], list):
+            for project in item["projects"]:
+                projects.append({
+                    "id": project.get("id"),
+                    "key": project.get("key"),
+                    "name": project.get("name"),
+                    "visibility": project.get("visibility", "private")
+                })
+        # Sinon, structure ancienne
+        elif "project" in item:
             projects.append({
                 "id": item["project"].get("id"),
                 "key": item["project"].get("key"),
@@ -73,32 +83,101 @@ def transform_projects(data):
             })
     return projects
 
+def extract_metric(measures, metric_name):
+    for m in measures:
+        if m.get("metric") == metric_name:
+            return m.get("value", "0")
+    return "0"
+
 def transform_metrics(data):
-    """Transforme les données brutes en métriques projets."""
+    """Transforme les données brutes en métriques projets au format attendu."""
     metrics = []
-    for item in data:
-        if "metrics" in item:
+    extraction_date = int(datetime.now().strftime("%Y%m%d"))
+
+    def process_project(item):
+        # Vérifie la présence des mesures SonarQube
+        if (
+            isinstance(item, dict)
+            and "project" in item
+            and "measures" in item
+            and "component" in item["measures"]
+            and "measures" in item["measures"]["component"]
+        ):
+            project_key = item["project"].get("key")
+            branch_name = "main"
+            if "branches" in item and isinstance(item["branches"], list) and item["branches"]:
+                branch_name = item["branches"][0].get("name", "main")
+            measures = item["measures"]["component"]["measures"]
             metrics.append({
-                "project_id": item.get("project_id"),
-                "date": datetime.now().strftime("%Y-%m-%d"),
-                "metrics": item["metrics"]
+                "project_key": project_key,
+                "date_id": extraction_date,
+                "branch_name": branch_name,
+                "n_bugs": extract_metric(measures, "bugs"),
+                "n_vulnerabilities": extract_metric(measures, "vulnerabilities"),
+                "n_code_smells": extract_metric(measures, "code_smells"),
+                "n_hotspots": extract_metric(measures, "security_hotspots"),
+                "n_duplicated_lines": extract_metric(measures, "duplicated_lines_density"),
+                "coverage": extract_metric(measures, "coverage"),
+                "complexity": extract_metric(measures, "complexity"),
+                "n_lines_of_code": extract_metric(measures, "lines_to_cover"),
+                "extraction_date": extraction_date
             })
+
+    # Parcours récursif pour trouver tous les projets
+    def recursive_search(obj):
+        if isinstance(obj, dict):
+            process_project(obj)
+            for v in obj.values():
+                recursive_search(v)
+        elif isinstance(obj, list):
+            for elem in obj:
+                recursive_search(elem)
+
+    recursive_search(data)
     return metrics
 
 def transform_issues(data):
     """Transforme les données brutes en issues."""
     issues = []
     for item in data:
-        if "issues" in item:
+        # Si la clé 'issues' existe et est une liste
+        if "issues" in item and isinstance(item["issues"], list):
             for issue in item["issues"]:
                 issues.append({
-                    "project_id": item.get("project_id"),
+                    "project_id": issue.get("project_id") or item.get("project_id"),
                     "key": issue.get("key"),
                     "type": issue.get("type"),
                     "severity": issue.get("severity"),
                     "status": issue.get("status")
                 })
     return issues
+
+def transform_projects_simple(data):
+    """Transforme les données brutes en liste simple de projets."""
+    projects = []
+
+    def process_project(item):
+        if isinstance(item, dict) and "project" in item:
+            project = item["project"]
+            projects.append({
+                "project_key": project.get("key"),
+                "project_name": project.get("name"),
+                "language": project.get("language"),  # <-- essaie d'extraire la langue si présente
+                "visibility": project.get("visibility", "private"),
+                "created_at": project.get("lastAnalysisDate")
+            })
+
+    def recursive_search(obj):
+        if isinstance(obj, dict):
+            process_project(obj)
+            for v in obj.values():
+                recursive_search(v)
+        elif isinstance(obj, list):
+            for elem in obj:
+                recursive_search(elem)
+
+    recursive_search(data)
+    return projects
 
 # ========================
 # Point d'entrée principal
@@ -110,20 +189,20 @@ def main():
 
     # Charger les données brutes
     raw_data = load_json_files(INPUT_DIR)
+    print(f"[DEBUG] Données brutes chargées : {json.dumps(raw_data, indent=2, ensure_ascii=False)}")
 
-    # Écrire la dimension projets
-    write_json(transform_projects(raw_data), "dim_project.json")
+    # Écrire la liste simple des projets
+    projects_simple = transform_projects_simple(raw_data)
+    write_json(projects_simple, "projects_simple.json")
 
     # Écrire les métriques du jour
     today_str = datetime.now().strftime("%Y%m%d")
     metrics_today = transform_metrics(raw_data)
+    print(f"[DEBUG] Métriques transformées : {json.dumps(metrics_today, indent=2, ensure_ascii=False)}")
     write_json(metrics_today, f"fact_project_metrics_{today_str}.json")
 
     # Mettre à jour l'historique des métriques
     append_json_history(metrics_today, "fact_project_metrics_history.json")
-
-    # Écrire les issues
-    write_json(transform_issues(raw_data), "fact_issues.json")
 
 if __name__ == "__main__":
     main()
