@@ -35,11 +35,11 @@ def load_merge_requests(json_path="data/transformers/merge_requests_transformed.
         insert_query = """
         INSERT INTO merge_requests (
             id, title, state, created_at, updated_at,
-            author, web_url, source_branch, target_branch, merged_at
+            author, web_url, source_branch, target_branch, merged_at, project_id
         )
         VALUES (
             %(id)s, %(title)s, %(state)s, %(created_at)s, %(updated_at)s,
-            %(author)s, %(web_url)s, %(source_branch)s, %(target_branch)s, %(merged_at)s
+            %(author)s, %(web_url)s, %(source_branch)s, %(target_branch)s, %(merged_at)s, %(project_id)s
         )
         ON CONFLICT (id) DO UPDATE SET
             title = EXCLUDED.title,
@@ -50,7 +50,8 @@ def load_merge_requests(json_path="data/transformers/merge_requests_transformed.
             web_url = EXCLUDED.web_url,
             source_branch = EXCLUDED.source_branch,
             target_branch = EXCLUDED.target_branch,
-            merged_at = EXCLUDED.merged_at;
+            merged_at = EXCLUDED.merged_at,
+            project_id = EXCLUDED.project_id;
         """
 
         success_count = 0

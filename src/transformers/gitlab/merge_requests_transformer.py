@@ -32,7 +32,8 @@ class MergeRequestsTransformer:
                 "web_url": mr.get("web_url"),
                 "source_branch": mr.get("source_branch"),
                 "target_branch": mr.get("target_branch"),
-                "merged_at": merged_at
+                "merged_at": merged_at,
+                "project_id": int(mr.get("project_id")) if mr.get("project_id") is not None else None,  # ajout ici
             }
             transformed.append(transformed_mr)
         return transformed

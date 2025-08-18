@@ -30,7 +30,8 @@ class PipelinesTransformer:
                 "updated_at": updated_at,
                 "web_url": pipeline.get("web_url"),
                 "user": pipeline.get("user", {}).get("name"),
-                "duration": pipeline.get("duration")
+                "duration": pipeline.get("duration"),
+                "project_id": int(pipeline.get("project_id")) if pipeline.get("project_id") is not None else None,  # ajout ici
             }
             transformed.append(transformed_pipeline)
         return transformed

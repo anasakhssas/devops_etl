@@ -31,10 +31,10 @@ def load_branches(json_path="data/transformers/branches_transformed.json"):
 
         insert_query = """
         INSERT INTO branches (
-            name, commit_id, commit_message, created_at, web_url
+            name, commit_id, commit_message, created_at, web_url, project_id
         )
         VALUES (
-            %(name)s, %(commit_id)s, %(commit_message)s, %(created_at)s, %(web_url)s
+            %(name)s, %(commit_id)s, %(commit_message)s, %(created_at)s, %(web_url)s, %(project_id)s
         )
         ON CONFLICT (name, commit_id) DO NOTHING;
         """
@@ -51,7 +51,8 @@ def load_branches(json_path="data/transformers/branches_transformed.json"):
                     "commit_id": branch.get("commit_id"),
                     "commit_message": branch.get("commit_message"),
                     "created_at": datetime.fromisoformat(branch["created_at"]) if branch.get("created_at") else None,
-                    "web_url": branch.get("web_url")
+                    "web_url": branch.get("web_url"),
+                    "project_id": branch.get("project_id"),  # ajout ici
                 }
 
                 cursor.execute(insert_query, branch_data)

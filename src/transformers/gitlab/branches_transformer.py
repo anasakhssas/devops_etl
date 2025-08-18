@@ -26,7 +26,8 @@ class BranchesTransformer:
                 "commit_id": branch.get("commit", {}).get("id"),
                 "commit_message": branch.get("commit", {}).get("message"),
                 "created_at": dt,
-                "web_url": branch.get("web_url")
+                "web_url": branch.get("web_url"),
+                "project_id": int(branch.get("project_id")) if branch.get("project_id") is not None else None,  # ajout ici
             }
             transformed.append(transformed_branch)
         return transformed
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     import os
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/projects_branches_incremental.json"))
+    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/projects_branches_incrementa.json"))
     output_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/transformers/branches_transformed.json"))
 
     if not os.path.exists(input_json_path):
