@@ -24,6 +24,7 @@ class CommitsTransformer:
                 "web_url": commit.get("web_url"),
                 "lines_added": stats.get("additions"),
                 "lines_deleted": stats.get("deletions"),
+                "project_id": int(commit.get("project_id")) if commit.get("project_id") is not None else None,  # conversion explicite
             }
             transformed.append(transformed_commit)
         return transformed
@@ -45,8 +46,10 @@ if __name__ == "__main__":
 
     # Fusionner tous les commits de tous les projets dans une seule liste
     all_commits = []
-    for commits_list in projects_commits.values():
-        all_commits.extend(commits_list)
+    for project_id, commits_list in projects_commits.items():
+        for commit in commits_list:
+            commit["project_id"] = int(project_id)  # Ajout du project_id comme entier
+            all_commits.append(commit)
 
     transformer = CommitsTransformer()
     transformed = transformer.transform(all_commits)

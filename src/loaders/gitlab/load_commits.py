@@ -32,11 +32,11 @@ def load_commits(json_path="data/transformers/commits_transformed.json"):
         insert_query = """
         INSERT INTO commits (
             id, short_id, title, author_name, author_email,
-            created_at, message, web_url, lines_added, lines_deleted
+            created_at, message, web_url, lines_added, lines_deleted, project_id
         )
         VALUES (
             %(id)s, %(short_id)s, %(title)s, %(author_name)s, %(author_email)s,
-            %(created_at)s, %(message)s, %(web_url)s, %(lines_added)s, %(lines_deleted)s
+            %(created_at)s, %(message)s, %(web_url)s, %(lines_added)s, %(lines_deleted)s, %(project_id)s
         )
         ON CONFLICT (id) DO NOTHING;
         """
@@ -59,6 +59,7 @@ def load_commits(json_path="data/transformers/commits_transformed.json"):
                     "web_url": commit.get("web_url"),
                     "lines_added": commit.get("lines_added"),
                     "lines_deleted": commit.get("lines_deleted"),
+                    "project_id": commit.get("project_id"),  # <-- ajout ici
                 }
 
                 cursor.execute(insert_query, commit_data)

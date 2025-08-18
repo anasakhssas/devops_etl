@@ -1,0 +1,66 @@
+{
+  "project_key": "stagepfa_devops_project",
+  "project_details": {
+    "component": {
+      "organization": "stagepfa",
+      "key": "stagepfa_devops_project",
+      "name": "DevOps_project",
+      "qualifier": "TRK",
+      "analysisDate": "2025-08-06T11:10:37+0000",
+      "tags": [],
+      "visibility": "private",
+      "version": "not provided"
+    },
+    "ancestors": []
+  },
+  "quality_measures": {
+    "error": "SonarQubeProjectsGateway.get_project_quality_metrics() got an unexpected keyword argument 'metrics'"
+  },
+  "coverage_measures": {
+    "component": {
+      "id": "AZh5edrJxvHCKXqrjStG",
+      "key": "stagepfa_devops_project",
+      "name": "DevOps_project",
+      "qualifier": "TRK",
+      "measures": [
+        {
+          "metric": "coverage",
+          "value": "0.0",
+          "bestValue": false
+        },
+        {
+          "metric": "lines_to_cover",
+          "value": "1"
+        },
+        {
+          "metric": "uncovered_lines",
+          "value": "1",
+          "bestValue": false
+        },
+        {
+          "metric": "line_coverage",
+          "value": "0.0",
+          "bestValue": false
+        }
+      ]
+    }
+  },
+  "issues_count": 0,
+  "branches_count": 1,
+  "pull_requests_count": 0,
+  "quality_gate": {
+    "projectStatus": {
+      "status": "NONE",
+      "conditions": [],
+      "periods": []
+    }
+  },
+  "ce_activity_count": 1,
+  "component_tree_items": 1,
+  "activity_history_metrics": [
+    "bugs",
+    "code_smells",
+    "vulnerabilities",
+    "coverage"
+  ]
+}
