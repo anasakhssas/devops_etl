@@ -37,7 +37,7 @@ if __name__ == "__main__":
     import os
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/projects_branches_incrementa.json"))
+    input_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/output/projects_branches_incremental.json"))
     output_json_path = os.path.abspath(os.path.join(base_dir, "../../../data/transformers/branches_transformed.json"))
 
     if not os.path.exists(input_json_path):
